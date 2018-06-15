@@ -1,0 +1,84 @@
+6/15/18:
+at suggestion of Dave Moore, no longer excluding non-natural stands
+
+4/14/18:
+do have a number of biomass > 5k which seems unlikely
+seems to be a bunch of yellow birch, red/sugar maple (weird for red maple), white/northern red oak, cottonwood
+
+most are bigger than 60 cm and many > 80 cm
+
+10k seems like reasonable upper limit though would really want it as fxn of dbh
+
+4/13/18:
+Charlie suggestions - going with these in 0.4 version of fia_to_pecan
+
+1) I'd go with Atlantic White cedar allometry.  Basically this is a subset of "other conifer" and the best Cupressaceae basis for all our cedar-juniper etc. 
+
+ 2) Use generic composite hardwood for all the hardwoods with insufficient allometries (cherries, elm, even "other hardwoods").
+
+3) The only other tweak is that "small hardwoods" (striped maple, rose trees, little cherries, dogwood), might use a composite  of all allometries for this group.
+
+4) hackberry definitely goes in generic hardwood.  Good screening.
+
+CP note the available allometry is northern white cedar not atlantic
+
+4/6/18:
+if use 970,972,... for elm, max dbh is ~25 cm but we have many trees greater than that in size
+that said while there are some outliners, it seems like it may not be that bad
+that said, sugar maple and ash behave much more consistently in dbh-biomass relationship
+
+cherry max dbh around 40 in allometry but there are bigger ones and fair number of outliers
+
+Atlantic white cedar seems to behave fine so maybe ok for cedar/juniper (actually it's not atlantic, it's northern white cedar)
+
+small tree dbhs have a lot of outliers; using small rosaceae might work
+using the generic hardwood - those are much denser than small rosaceae
+small tree category (i.e. small maples, hornbeams etc) are a bit bigger dbh than small rosaceae
+
+3/3/18:
+now restricting to plots with only a single condition (based on having one CONDID) and only natural stands (STDORGCD==0) and only forested (COND_STATUS_CD==1)
+
+idea is that there is little natural grassland left so these conditions restrict to land most comparable to settlement time
+
+2/16/18:
+basal area maps look pretty heterogeneous too, so biomass heterogeneity
+is probably not primarily from allometry variability
+
+2/15/18:
+to unzip NRS file with true coordinates: 7z x file.zip on Linux
+
+2/14/18:
+Mike confirms 'Bg' is w/o random effects and ok to use alloms for taxa where only 1-2 alloms present
+
+points are last iteration's imputation
+
+2/13/18:
+using avg of 10 allom draws instead of single draw does not show appreciably different smoothness in plot-level biomass; so it seems likely that the heterogeneity is a function of number and dbh of trees in plot and not of allometric sampling
+
+2/12/18:
+bam() with default fREML fitting doesn't seem to use gamma
+
+using #sites as weights for arithmetic avg fit on log scale probably doesn't make stat sense; use with geom avg does, but note that use of geom avg pulls down the heaviest biomass areas
+
+will need to think about loss fxn - squared error on arith or geom scale - we probably do care about absolute errors?
+
+there are lots of sites with ~150 but there are also nearby sites with pretty low biomass; this results in a fair amount of spatial smoothing since we are operating at the 8 km grid scale
+
+comment in paper that there is surely a lot of spatial structure in biomass in FIA but it operates at the stand level and not the landscape level
+
+note alloms could be correlated spatially but we have no way of dealing with that
+
+if most allom variab is tree to tree, we'll have more plot-plot variability and more spatial smoothing; if more is spatially structured we're going to oversmooth if we don't capture that smooth variation in allometry
+
+2/7/18:
+looks like there is instability (from outliers in mu0 and mu1 and effect of tau) when using site effects in the allometry (presumably if have a lot of allometries it would be better but even for PLS we are using a small number of pecan_spcd values).
+
+There is little data for components 2 and 3 so we should probably use component 6, which Dave thinks may be ok.
+
+2/5/18:
+Andy Finley says the sampling changed as of 1999 and hard to match before and after so we should probably only use post-1999
+
+2/1/18:
+Sean's plot_corrected has true coords (merge based on CN)
+
+There are about 2x as many plots if use before 2000. Why are so many plots not resampled post-2000? Also in many of these cases the location is different. We are identifying unique plots (locations) by PLOT x STATECD x UNITCD x COUNTYCD.

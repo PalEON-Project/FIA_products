@@ -1,0 +1,68 @@
+## configuration file for running all analyses
+## enter all fixed constants and file names here
+## this is sourced by R, but in a format that could
+## be sourced in the shell if desired (use of '=' and without spaces)
+
+product_version=0.1
+
+## directory locations: these default to ../data/{points,conversions,allom}, code, and ../output in master.R
+raw_data_dir=""
+conversions_data_dir=""
+allom_dir=""
+code_dir=""
+output_dir=""
+interim_results_dir=""
+
+redownload_FIA_data=0
+
+## PEcAn versions as of 2018-02-10
+pecan_base_logger_commit="3d6cbba"
+pecan_modules_allometry_commit="7064209"
+
+## data files
+nrs_coordinates_file="NRS_actual_coords_forested_plots.xlsx"
+nrs_coordinates_file_run2="NRS_actual_coords_forested_plots_2nd_run.xlsx"
+nrs_coordinates_file_run3="NRS_actual_coords_forested_plots_3rd_run.xlsx"
+
+## conversion files
+fia_to_pecan_conversion_file="fia_to_pecan_v0.4.csv"
+fia_plot_to_paleon_gridcell_file="FIA_raster_cell_albers.csv"
+fia_to_level3a_file="fia_to_level3a_v0.4.csv"
+level3a_to_level3s_file="level3a_to_level3s_v0.4.csv"
+
+
+## data earlier than 1999 from different survey design and
+## use of it could result in using data from the same plot twice
+## 2016 was most recent data available as of February 2018 analysis
+earliest_fia_year=1999
+latest_fia_year=2016
+
+## At Dave Moore's suggestion, we include plots with artificial regeneration
+exclude_plantation=0
+
+## unit conversions
+cm_to_inch=0.39370
+fia_subplot_radius_in_feet=24 
+fia_subplots_per_plot=4
+squ_feet_per_acre=43560
+acres_per_ha=2.47105
+kg_per_Mg=1000
+
+## sanity checks and cutoffs
+biomass_max_kg=10000
+diameter_cutoff_inches=8
+
+## allometric scaling and uncertainty parameters
+n_allom_samples=10  # make this bigger
+allom_component=6
+do_allom_uncertainty=0  # for now, don't include allometric uncertainty
+
+## cross-validation folds
+do_cv=0
+n_folds=10
+
+## maximum degrees of freedom for spatial statistical smoothing
+k_pot_total=1000
+k_occ_taxon=1500
+k_pot_taxon=1000
+n_stat_samples=250
