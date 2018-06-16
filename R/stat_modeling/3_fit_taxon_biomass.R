@@ -11,11 +11,9 @@ if(!exists('k_occ_taxon'))
 if(!exists('k_pot_taxon'))
     stop("Must specify 'k_pot_taxon'")
 
-k_occ_taxon=2000
-k_pot_taxon=2000
-
 l3a_to_l3s <- read_csv(file.path(conversions_data_dir, level3a_to_level3s_file)) 
 taxa_to_fit <- unique(l3a_to_l3s$level3s)
+taxa_to_fit <- taxa_to_fit[!taxa_to_fit %in% excluded_level3s_OH]
 
 ## for naming consistency with PLS, will refer to FIA plots as 'points'
 
@@ -23,7 +21,9 @@ area_conversion <- acres_per_ha * squ_feet_per_acre /
     (pi * fia_subplot_radius_in_feet^2 * fia_subplots_per_plot) / kg_per_Mg 
 
 ## total number of fia points per grid cell
-plots_per_cell <- biomass_plot %>% group_by(cell) %>% summarize(points_total = n()) 
+plots_per_cell <- fia %>% group_by(PLT_CN, x, y, cell) %>%
+    summarize(n_trees = n()) %>% 
+    group_by(cell) %>% summarize(points_total = n()) 
 
 ## currently grouping taxa by level3s but this is likely to change
 biomass_taxon_plot <- fia %>% group_by(PLT_CN, level3s, cell, x, y) %>%
@@ -59,14 +59,16 @@ if(do_cv) {
     ## fit stats model
     for(taxonIdx in seq_along(taxa_to_fit)) {
         taxon <- taxa_to_fit[taxonIdx]
-        tmp <- cell_full %>% filter(level3s == taxon)
+        sub <- cell_full %>% filter(level3s == taxon)
         k_occ <- k_occ_taxon
         k_pot <- k_pot_taxon
-        ncells <- sum(cell_full$avg > 0)
+        ncells <- sum(sub$avg > 0)
         if(ncells < k_pot + 200)
-            k_pot <- ncells*0.9
-        biomass_taxon[[taxonIdx]] <- fit(tmp, newdata = pred_grid_west, k_occ = k_occ, k_pot = k_pot, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples)
+            k_pot <- round(ncells*0.9)
+        biomass_taxon[[taxonIdx]] <- try(fit(sub, newdata = pred_grid_west, k_occ = k_occ, k_pot = k_pot, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples))
+        print(taxon)
+        save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
     }
 }
 
-save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
+

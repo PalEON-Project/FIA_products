@@ -14,8 +14,6 @@ vars = c('PLT_CN', 'PLOT', 'UNITCD', 'COUNTYCD', 'STATECD', 'SUBP', 'LAT', 'LON'
   'TREE', 'SPCD', 'DIA', 'STATUSCD', 'TPA_UNADJ', 'DRYBIO_AG')
 fia = data.frame(matrix(NA, nrow = 0, ncol = length(vars)))
 
-excluded_level3s_OH <- "Dogwood"
-
 for(state in states){
     cat("Processing state ", state, " ... ")
 
