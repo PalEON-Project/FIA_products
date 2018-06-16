@@ -14,6 +14,7 @@ if(!exists('k_pot_taxon'))
 l3a_to_l3s <- read_csv(file.path(conversions_data_dir, level3a_to_level3s_file)) 
 taxa_to_fit <- unique(l3a_to_l3s$level3s)
 taxa_to_fit <- taxa_to_fit[!taxa_to_fit %in% excluded_level3s_OH]
+print(taxa_to_fit)
 
 ## for naming consistency with PLS, will refer to FIA plots as 'points'
 
@@ -65,7 +66,7 @@ if(do_cv) {
         ncells <- sum(sub$avg > 0)
         if(ncells < k_pot + 200)
             k_pot <- round(ncells*0.9)
-        biomass_taxon[[taxonIdx]] <- try(fit(sub, newdata = pred_grid_west, k_occ = k_occ, k_pot = k_pot, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples))
+        biomass_taxon[[taxonIdx]] <- try(fit(sub, newdata = pred_grid_west, k_occ = k_occ, k_pot = k_pot, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples, save_draws = TRUE))
         print(taxon)
         save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
     }
