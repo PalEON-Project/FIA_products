@@ -63,9 +63,6 @@ if(do_cv) {
         sub <- cell_full %>% filter(level3s == taxon)
         k_occ <- k_occ_taxon
         k_pot <- k_pot_taxon
-        ncells <- sum(sub$avg > 0)
-        if(ncells < k_pot + 200)
-            k_pot <- round(ncells*0.9)
         biomass_taxon[[taxonIdx]] <- try(fit(sub, newdata = pred_grid_west, k_occ = k_occ, k_pot = k_pot, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples, save_draws = TRUE))
         print(taxon)
         save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
