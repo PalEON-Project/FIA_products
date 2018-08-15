@@ -58,8 +58,10 @@ allom_component=6
 do_allom_uncertainty=0  # for now, don't include allometric uncertainty
 
 ## cross-validation folds
-do_cv=0
 n_folds=10
+# truncate at these values when using CV to compare data and fits
+cv_max_biomass=200
+cv_max_density=600
 
 ## maximum degrees of freedom for spatial statistical smoothing
 k_pot_total=1000

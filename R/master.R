@@ -54,8 +54,12 @@ code_files <- list.files(code_dir, pattern = ".R$", full.names = TRUE)
 sapply(code_files, source)
 
 excluded_level3s_OH <- c('Dogwood', 'Chestnut', 'None')
-# Dogwood: only 20 trees >= 20 cm
-# Chestnut: no modern data
+## Dogwood: only 20 trees >= 20 cm
+## Chestnut: no modern data
 
-# TMP: for seeing all cols instead of tibble
+## values used in cross-validation
+k_occ_cv <- c(100,250,500,1000,1500,2000,2500)
+k_pot_cv = c(100,250,500,1000,1500,2000,2500,3000,3500)
+
+## TMP: for seeing all cols instead of tibble
 adf <- as.data.frame
