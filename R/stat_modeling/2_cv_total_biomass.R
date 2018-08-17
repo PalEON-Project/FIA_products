@@ -42,14 +42,15 @@ if(n_cores == 0) {
 library(doParallel)
 registerDoParallel(cores = n_cores)
 
-results <- fit_cv_total(cell_full, k_occ_cv, k_pot_cv)
+results <- fit_cv_total(cell_full, k_pot = k_pot_cv)
 
 ## assess results
     
-y <- cell_full$avg*cell_full$points_occ/cell_full$points_total ## actual average biomass over all cells
+y <- cell_full$avg
 
-critArith <- calc_cv_criterion(results$pred_occ, results$pred_pot_arith, cell_full$points_total, y, cv_max_biomass)
-critLogArith <- calc_cv_criterion(results$pred_occ, results$pred_pot_larith, cell_full$points_total, y, cv_max_biomass)
+## weight by points_occ as same as points_total
+critArith <- calc_cv_criterion(results$pred_occ, results$pred_pot_arith, cell_full$points_occ, y, cv_max_biomass)
+critLogArith <- calc_cv_criterion(results$pred_occ, results$pred_pot_larith, cell_full$points_occ, y, cv_max_biomass)
 
-save(critArith, critLogArith, file = file.path(interim_results_dir, 'cv_total_biomass.Rda'))
+save(critArith, critLogArith, results, file = file.path(interim_results_dir, 'cv_total_biomass.Rda'))
 

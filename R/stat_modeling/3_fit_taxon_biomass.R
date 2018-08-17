@@ -59,14 +59,14 @@ cell_full <- expanded %>%
            geom_avg = ifelse(is.na(geom_avg), 0, geom_avg))
 
 biomass_taxon <- foreach(taxonIdx = seq_along(taxa_to_fit)) %dopar% {
-    taxon <- taxa[taxonIdx]
+    taxon <- taxa_to_fit[taxonIdx]
     sub <- cell_full %>% filter(level3s == taxon)
     ## fit stats model
-    biomass_taxon[[taxonIdx]] <- try(fit(sub, newdata = pred_grid_west, k_occ = k_occ_taxon, k_pot = k_pot_taxon, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples, save_draws = TRUE, use_bam = TRUE))
+    try(fit(sub, newdata = pred_grid_west, k_occ = k_occ_taxon, k_pot = k_pot_taxon, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples, save_draws = TRUE, use_bam = TRUE))
 }
 
 names(biomass_taxon) <- taxa_to_fit
-save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
+save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass_5xcut.Rda'))
     
 
 

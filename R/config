@@ -63,6 +63,13 @@ n_folds=10
 cv_max_biomass=200
 cv_max_density=600
 
+## parallelization
+
+#set to 0 to use all cores on machine or all cores provided through SLURM scheduler
+n_cores=0
+# set to 1 to use doMPI
+use_mpi=0
+
 ## maximum degrees of freedom for spatial statistical smoothing
 k_pot_total=1000
 k_occ_taxon=1500

@@ -9,7 +9,7 @@ taxa_to_fit <- unique(l3a_to_l3s$level3s)
 taxa_to_fit <- taxa_to_fit[!taxa_to_fit %in% excluded_level3s_OH]
 print(taxa_to_fit)
 
-if(do_mpi) {
+if(use_mpi) {
     library(doMPI)
     cl <- startMPIcluster()
     registerDoMPI(cl)
@@ -66,37 +66,39 @@ cell_full <- cell_full %>% inner_join(data.frame(cell = cells, fold = folds), by
 output <- foreach(taxonIdx = seq_along(taxa_to_fit)) %:%
     foreach(i = seq_len(n_folds)) %dopar% {
 
-        taxon <- taxa[taxonIdx]
+        taxon <- taxa_to_fit[taxonIdx]
         sub <- cell_full %>% filter(level3s == taxon)
 
         train <- sub %>% filter(fold != i)
         test <- sub %>% filter(fold == i)
 
-        po <- fit(train, newdata = test, k_occ = k_occ_cv, unc = FALSE)
-        ppa <- fit(train, newdata = test, k_pot = k_pot_cv, type_pot = 'arith', unc = FALSE)
-        ppl <- fit(train, newdata = test, k_pot = k_pot_cv, type_pot = 'log_arith', unc = FALSE)
-
+        po <- fit(train, newdata = test, k_occ = k_occ_cv, unc = FALSE, use_bam = TRUE)
+        ppa <- fit(train, newdata = test, k_pot = k_pot_cv, type_pot = 'arith', unc = FALSE, use_bam = TRUE)
+        ppl <- fit(train, newdata = test, k_pot = k_pot_cv, type_pot = 'log_arith', unc = FALSE, use_bam = TRUE)
+        print(i, taxonIdx)
         list(po$pred_occ, ppa$pred_pot, ppl$pred_pot)
     }
 
+pred_occ <- array(0, c(length(taxa_to_fit), nrow(plots_per_cell), length(k_occ_cv)))
+pred_pot_arith <- pred_pot_larith <- array(0, c(length(taxa_to_fit), nrow(plots_per_cell), length(k_pot_cv)))
 
-dimnames(pred_occ)[[1]] <- taxa_to_fit
-dimnames(pred_pot_arith)[[1]] <- dimnames(pred_pot_larith)[[1]] <- k_pot_cv
-dimnames(pred_occ)[[3]] <- taxa_to_fit
+dimnames(pred_occ)[[1]] <- dimnames(pred_pot_arith)[[1]] <- dimnames(pred_pot_larith)[[1]] <- taxa_to_fit
+dimnames(pred_occ)[[3]] <- k_occ_cv
 dimnames(pred_pot_arith)[[3]] <- dimnames(pred_pot_larith)[[3]] <- k_pot_cv
 
 for(taxonIdx in seq_along(taxa_to_fit))
     for(i in seq_len(n_folds)) {
-        pred_occ[taxonIdx, cell_full$fold == i, ] <- output[[taxonIdx]][[i]][[1]]
-        pred_pot_arith[taxonIdx, cell_full$fold == i, ] <- output[[taxonIdx]][[i]][[2]]
-        pred_pot_larith[taxonIdx, cell_full$fold == i, ] <- output[[taxonIdx]][[i]][[3]]
+        taxon <- taxa_to_fit[taxonIdx]
+        sub <- cell_full %>% filter(level3s == taxon)
+        pred_occ[taxonIdx, sub$fold == i, ] <- output[[taxonIdx]][[i]][[1]]
+        pred_pot_arith[taxonIdx, sub$fold == i, ] <- output[[taxonIdx]][[i]][[2]]
+        pred_pot_larith[taxonIdx, sub$fold == i, ] <- output[[taxonIdx]][[i]][[3]]
     }
-}
 
 critArith <- critLogArith <- array(0, c(length(taxa_to_fit), length(k_occ_cv), length(k_pot_cv)))
 for(taxonIdx in seq_along(taxa_to_fit)) {
     ## extract raw data (again) for the taxon
-    taxon <- taxa[taxonIdx]
+    taxon <- taxa_to_fit[taxonIdx]
     sub <- cell_full %>% filter(level3s == taxon)
         
     y <- sub$avg*sub$points_occ/sub$points_total  ## actual average biomass over all cells
@@ -108,7 +110,7 @@ for(taxonIdx in seq_along(taxa_to_fit)) {
 }
 
 
-save(critArith, critLogArith, file = file.path(interim_results_dir, 'cv_taxon_biomass.Rda'))
+save(critArith, critLogArith, pred_occ, pred_pot_arith, pred_pot_larith, file = file.path(interim_results_dir, 'cv_taxon_biomass.Rda'))
 
 
-if(do_mpi) closeCluster(cl)
+if(use_mpi) closeCluster(cl)

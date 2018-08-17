@@ -26,7 +26,7 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
     newdata[ , c('x','y')] <- newdata[ , c('x','y')] / scaling
     data[ , c('x','y')] <- data[ , c('x','y')] / scaling 
 
-    pred_occ <- pred_pot <- pred <- draws <- model_occ <- model_pot <- NULL
+    pred_occ <- pred_occ_se <- pred_pot <- pred <- draws <- model_occ <- model_pot <- NULL
     
   ###########################
   #  stage 1: fit occupancy #
@@ -114,7 +114,10 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
                     ## draws_linpred can have high variance near boundary, where value of draws_linpred is very negative (so occ=0)
                     ## individual draws then can have high occ in those areas
                     ## draws_linpred can have high variance in small areas producing very positive linpred values corresponding to very small pred_occ values
-                    draws_logocc[pred_occ < 0.001 & pred_occ_se < 0.001] <- -Inf            
+                    log_predocc_plus5 <- log(5) + log(pred_occ)
+                    draws_logocc <- apply(draws_logocc, 2, function(x) {
+                        x[x > log_predocc_plus5] <- log(pred_occ[x > log_predocc_plus5])
+                        return(x)})
                     ## address numerical issue that seems to arise
                     ## (e.g., central MI in total biomass)
                     ## that produces some draws where Pr(occ)=0
@@ -145,7 +148,10 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
             }
             pred <- data.frame(mean = pred, sd = pp.sd)
         }
-    } else if(unc) warning("more than one 'k' value -- not computing uncertainty.")
+    } else {
+        if(unc) warning("more than one 'k' value -- not computing uncertainty.")
+        draws_logpot <- draws_logocc <- draws_logocc_orig <- NULL
+    }
     if(!return_model) {
         model_occ <- NULL
         model_pot <- NULL
@@ -159,29 +165,37 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
 }
 
 
-fit_cv_total <- function(cell_full, k_occ, k_pot) {
-    pred_occ <- matrix(0, nrow(cell_full), length(k_occ))
+fit_cv_total <- function(cell_full, k_occ = NULL, k_pot) {
+    if(!is.null(k_occ)) {
+        pred_occ <- matrix(0, nrow(cell_full), length(k_occ))
+        dimnames(pred_occ)[[2]] <- k_occ
+    } else pred_occ <- matrix(1, nrow(cell_full), 1)
+
     pred_pot_arith <- pred_pot_larith <- matrix(0, nrow(cell_full), length(k_pot))
-    
-    dimnames(pred_occ)[[2]] <- k_occ
     dimnames(pred_pot_arith)[[2]] <- dimnames(pred_pot_larith)[[2]] <- k_pot
     
     n_folds <- max(cell_full$fold)
     output <- foreach(i = seq_len(n_folds)) %dopar% {
         train <- cell_full %>% filter(fold != i)
         test <- cell_full %>% filter(fold == i)
-        
-        po <- fit(train, newdata = test, k_occ = k_occ, unc = FALSE)
-        ppa <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'arith', unc = FALSE)
-        ppl <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'log_arith', unc = FALSE)
+
+        if(!is.null(k_occ)) {
+            po <- fit(train, newdata = test, k_occ = k_occ, unc = FALSE, use_bam = TRUE)
+        } else po <- NULL
+        ppa <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'arith', unc = FALSE, use_bam = TRUE)
+        ppl <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'log_arith', unc = FALSE, use_bam = TRUE)
         list(po, ppa, ppl)
         cat("n_fold: ", i, " ", date(), "\n")
     }
     for(i in seq_len(n_folds)) {
-        pred_occ[cell_full$fold == i, ] <- output[[i]][[1]]$pred_occ
+        if(!is.null(k_occ)) {
+            pred_occ[cell_full$fold == i, ] <- output[[i]][[1]]$pred_occ
+        } 
         pred_pot_arith[cell_full$fold == i, ] <- output[[i]][[2]]$pred_pot
         pred_pot_larith[cell_full$fold == i, ] <- output[[i]][[3]]$pred_pot
     }
     return(list(pred_occ = pred_occ, pred_pot_arith = pred_pot_arith, pred_pot_larith = pred_pot_larith))
 }
+
+
 

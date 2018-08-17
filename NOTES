@@ -1,3 +1,13 @@
+8/16/18:
+draws from bam fits seem pretty good, except that for a few taxa (beech, gum, fir [a bit], hemlock, pine, spruce, tamarack), the boundary issues in sd of draws_logocc arise and we have crazy sd's until do the logocc truncation and that truncation is not smooth in terms of the resulting sd if the draws of occ
+
+This does show up in sd for biomass for beech, gum, fir [a bit], hemlock, pine, spruce [a lot], tamarack.
+
+Setting draw values > 5x the corresponding point pred for occ seems like it might make sense. Instead of the 0.001 cutoff.
+Note that the se cutoff seems like it may be redundant as the pred and se track each other pretty closely at least in
+
+Yes, 5x cutoff works well to match model-based se from bam() with sd of draws. Might also do this for PLS.
+
 6/15/18:
 at suggestion of Dave Moore, no longer excluding non-natural stands
 
