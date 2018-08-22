@@ -27,7 +27,10 @@ for(state in states){
     if(exclude_plantation) {
         homogeneous_forested_plots <- state_plot %>% left_join(state_cond, by = c('CN' = 'PLT_CN')) %>% group_by(CN) %>% summarize(n = n(), avg_status = mean(COND_STATUS_CD), avg_origin = mean(STDORGCD)) %>% filter(avg_status == 1, avg_origin == 0)
     } else homogeneous_forested_plots <- state_plot %>% left_join(state_cond, by = c('CN' = 'PLT_CN')) %>% group_by(CN) %>% summarize(n = n(), avg_status = mean(COND_STATUS_CD)) %>% filter(avg_status == 1)
-                                                                         
+
+    ## Note: if we want to use plots that are partially forested, we need to retain 'COND:::CONDPROP_UNADJ'
+    ## and then divide biomass/density at plot level by that number for correct scaling to area surveyed.
+    
     ## only sampled, forested plots with surveys since changeover in survey design
     state_plot <- state_plot %>% filter(PLOT_STATUS_CD == 1 & INVYR >= earliest_fia_year & INVYR <= latest_fia_year)
 

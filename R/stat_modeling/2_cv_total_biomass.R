@@ -51,6 +51,7 @@ y <- cell_full$avg
 ## weight by points_occ as same as points_total
 critArith <- calc_cv_criterion(results$pred_occ, results$pred_pot_arith, cell_full$points_occ, y, cv_max_biomass)
 critLogArith <- calc_cv_criterion(results$pred_occ, results$pred_pot_larith, cell_full$points_occ, y, cv_max_biomass)
+colnames(critArith) <- colnames(critLogArith) <- k_pot_cv
 
 save(critArith, critLogArith, results, file = file.path(interim_results_dir, 'cv_total_biomass.Rda'))
 

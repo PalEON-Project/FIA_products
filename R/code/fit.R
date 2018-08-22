@@ -184,8 +184,8 @@ fit_cv_total <- function(cell_full, k_occ = NULL, k_pot) {
         } else po <- NULL
         ppa <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'arith', unc = FALSE, use_bam = TRUE)
         ppl <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'log_arith', unc = FALSE, use_bam = TRUE)
-        list(po, ppa, ppl)
         cat("n_fold: ", i, " ", date(), "\n")
+        list(po, ppa, ppl)
     }
     for(i in seq_len(n_folds)) {
         if(!is.null(k_occ)) {
