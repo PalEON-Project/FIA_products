@@ -1,3 +1,46 @@
+8/30/18:
+combined CV resutls from cv_taxon_biomass.Rda cv_taxon_biomass_high_kocc.Rda
+into cv_taxon_biomass.Rda  and saved old cv_taxon_biomass.Rda  as cv_taxon_biomass_low_kocc.Rda
+
+timing notes:
+CV for total: 10 cores on high cluster: 3 hours
+CV for taxon: 21 cores on high cluster: 2.5 days with k_occ <= 2500
+perhaps 5 days to do k_occ \in {3000,3500}
+
+
+8/24/18:
+CV results:
+
+total: arith with k=3500 but k \in {2500,3000,3500} equivalent and fitted hold-out values essentially identical
+
+taxon: arith better than logArith
+increasing k for occ always better than smaller k, but k \in {2500,3000,3500} basically equivalent
+larger k for pot has little impact once k>=1000 or so. k_pot = 2500 seems a good choice
+
+8/22/18:
+
+CV results:
+
+arith model:
+> critArith
+          100      250      500     1000     1500     2000     2500     3000
+[1,] 3010.227 2898.894 2853.498 2833.168 2829.324 2828.409 2818.927 2818.676
+         3500
+[1,] 2818.574
+
+> critLogArith
+          100      250      500     1000    1500     2000     2500     3000
+[1,] 3238.904 3116.141 3068.661 3047.923 3044.01 3042.993 3034.879 3034.746
+         3500
+[1,] 3034.647
+
+arithmetic fit is generally higher by a fair amount
+55% of arith fits higher than data
+44% of log arith fits higher than data
+
+most clear diffs in images are in SW MN, IL and IN with larith rather lower, but scatterplot shows that arith > larith by a consistent amount
+see 'results' in .Rda output for CV
+
 8/16/18:
 draws from bam fits seem pretty good, except that for a few taxa (beech, gum, fir [a bit], hemlock, pine, spruce, tamarack), the boundary issues in sd of draws_logocc arise and we have crazy sd's until do the logocc truncation and that truncation is not smooth in terms of the resulting sd if the draws of occ
 

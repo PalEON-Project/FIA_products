@@ -30,6 +30,7 @@ for(state in states){
 
     ## Note: if we want to use plots that are partially forested, we need to retain 'COND:::CONDPROP_UNADJ'
     ## and then divide biomass/density at plot level by that number for correct scaling to area surveyed.
+    ## see Github issue #2
     
     ## only sampled, forested plots with surveys since changeover in survey design
     state_plot <- state_plot %>% filter(PLOT_STATUS_CD == 1 & INVYR >= earliest_fia_year & INVYR <= latest_fia_year)

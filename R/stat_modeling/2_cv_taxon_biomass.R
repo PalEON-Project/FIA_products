@@ -75,7 +75,7 @@ output <- foreach(taxonIdx = seq_along(taxa_to_fit)) %:%
         po <- fit(train, newdata = test, k_occ = k_occ_cv, unc = FALSE, use_bam = TRUE)
         ppa <- fit(train, newdata = test, k_pot = k_pot_cv, type_pot = 'arith', unc = FALSE, use_bam = TRUE)
         ppl <- fit(train, newdata = test, k_pot = k_pot_cv, type_pot = 'log_arith', unc = FALSE, use_bam = TRUE)
-        print(i, taxonIdx)
+        cat("taxon: ", taxonIdx, " ; fold: ", i, "\n", sep = "")
         list(po$pred_occ, ppa$pred_pot, ppl$pred_pot)
     }
 

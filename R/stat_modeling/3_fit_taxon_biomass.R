@@ -66,7 +66,7 @@ biomass_taxon <- foreach(taxonIdx = seq_along(taxa_to_fit)) %dopar% {
 }
 
 names(biomass_taxon) <- taxa_to_fit
-save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass_5xcut.Rda'))
+save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
     
 
 

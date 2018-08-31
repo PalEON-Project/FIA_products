@@ -29,9 +29,13 @@ source('config')
 states = c('MN', 'WI', 'MI', 'IL', 'IN', 'OH', 'PA', 'NY', 'NJ', 'ME', 'VT', 'MA', 'CT', 'NH', 'RI')
 
 paleon_regions_west <- c(2,3,5,6,11,12) ## MI/IN and west
+paleon_regions_west_ohio <- c(2,3,5,6,9,11,12) ## OH and west
+paleon_regions_east <- c(1,4,7,8,9,10)
 paleon_regions <- 1:12
 
 paleon_states_west <- c(17, 18, 26, 27, 55) 
+paleon_states_west_ohio <- c(paleon_states_west, 39)
+paleon_states_east <- c(9, 23, 25, 33, 34, 36, 39, 42, 44, 50)  # includes Ohio (39)
 
 
 ## setup directories relative to current working directory
@@ -57,8 +61,8 @@ excluded_level3s_OH <- c('Dogwood', 'Chestnut', 'None')
 ## Dogwood: only 20 trees >= 20 cm
 ## Chestnut: no modern data
 
-## values used in cross-validation
-k_occ_cv <- c(100,250,500,1000,1500,2000,2500)
+## values used in cross-validation for biomass/density
+k_occ_cv <- c(100,250,500,1000,1500,2000,2500)  # 3000,3500
 k_pot_cv = c(100,250,500,1000,1500,2000,2500,3000,3500)
 
 ## TMP: for seeing all cols instead of tibble

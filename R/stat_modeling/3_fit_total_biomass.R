@@ -27,8 +27,6 @@ cell_full <- biomass_plot %>% group_by(cell, x, y) %>%
 ## total number of fia points per grid cell
 plots_per_cell <- biomass_plot %>% group_by(cell) %>% summarize(points_total = n()) 
 
-warning("still need to check if natural grasslands make it through the filtering")
-
 if(nrow(cell_full) != nrow(plots_per_cell))
     stop("number of cells with FIA plots not the same as the number of cells with biomass")
 

@@ -3,7 +3,7 @@
 ## this is sourced by R, but in a format that could
 ## be sourced in the shell if desired (use of '=' and without spaces)
 
-product_version=0.2
+product_version=0.99
 
 ## directory locations: these default to ../data/{points,conversions,allom}, code, and ../output in master.R
 raw_data_dir=""
@@ -57,13 +57,13 @@ n_allom_samples=10  # make this bigger
 allom_component=6
 do_allom_uncertainty=0  # for now, don't include allometric uncertainty
 
-## cross-validation folds
+## cross-validation folds for biomass/density
 n_folds=10
 # truncate at these values when using CV to compare data and fits
 cv_max_biomass=200
 cv_max_density=600
 
-## parallelization
+## parallelization for biomass
 
 #set to 0 to use all cores on machine or all cores provided through SLURM scheduler
 n_cores=0
@@ -71,7 +71,33 @@ n_cores=0
 use_mpi=0
 
 ## maximum degrees of freedom for spatial statistical smoothing
-k_pot_total=1000
-k_occ_taxon=1500
-k_pot_taxon=1000
+k_pot_total=2500
+
+k_occ_taxon=2500
+k_pot_taxon=2500
 n_stat_samples=250
+
+## settings for composition modeling
+runID=0
+resumeRun=0
+
+nbhdStructure="bin"  # bin, lindgren_nu1, tps
+
+# MCMC sampling
+composition_region="eastern"
+do_mcmc=TRUE
+do_draws=FALSE
+S=150000
+burnin=25000
+thin=500  # thinning applies to all S not just S-burnin
+secondThin=1
+resumeRun=FALSE
+numCoresForProps=4 # number of cores to use for drawing final proportions (no parallelization used in MCMC)
+numSamplesForProps=10000
+
+buffer=0
+seed=1
+
+cv_composition=FALSE
+cellHoldOutPct=0.95
+treeHoldOutPct=0.05

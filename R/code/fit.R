@@ -123,7 +123,7 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
                     ## that produces some draws where Pr(occ)=0
                     draws_logocc[pred_occ > 0.999] <- 0
                 } else draws_logocc_orig <- NULL
-            } else draws_logocc <- 0
+            } else draws_logocc <- draws_logocc_orig <- 0
             ## best to construct CIs on log scale and exponentiate endpoints
             
             ## posterior draws of (log) potential result
