@@ -62,7 +62,7 @@ biomass_taxon <- foreach(taxonIdx = seq_along(taxa_to_fit)) %dopar% {
     taxon <- taxa_to_fit[taxonIdx]
     sub <- cell_full %>% filter(level3s == taxon)
     ## fit stats model
-    try(fit(sub, newdata = pred_grid_west, k_occ = k_occ_taxon, k_pot = k_pot_taxon, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples, save_draws = TRUE, use_bam = TRUE))
+    try(fit(sub, newdata = pred_grid_paleon, k_occ = k_occ_taxon, k_pot = k_pot_taxon, return_model = TRUE, unc = TRUE, type_pot = 'arith', num_draws = n_stat_samples, save_draws = TRUE, use_bam = TRUE))
 }
 
 names(biomass_taxon) <- taxa_to_fit

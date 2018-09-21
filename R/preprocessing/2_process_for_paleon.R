@@ -7,7 +7,7 @@ library(readr)
 ## see here for FIA metadata
 ## https://www.fia.fs.fed.us/library/database-documentation/index.php
 
-## This provides column type information. See notes in the file for why this is important.
+## Enforce column type information. See notes in fia_cols.R for why this is important.
 source(file.path('preprocessing','fia_cols.R'))
 
 vars = c('PLT_CN', 'PLOT', 'UNITCD', 'COUNTYCD', 'STATECD', 'SUBP', 'LAT', 'LON', 'INVYR', 
@@ -25,18 +25,23 @@ for(state in states){
     state_cond <- state_cond %>% dplyr::select(PLT_CN, STDORGCD, CONDID, COND_STATUS_CD, CONDPROP_UNADJ)
 
     if(exclude_plantation) {
-        homogeneous_forested_plots <- state_plot %>% left_join(state_cond, by = c('CN' = 'PLT_CN')) %>% group_by(CN) %>% summarize(n = n(), avg_status = mean(COND_STATUS_CD), avg_origin = mean(STDORGCD)) %>% filter(avg_status == 1, avg_origin == 0)
-    } else homogeneous_forested_plots <- state_plot %>% left_join(state_cond, by = c('CN' = 'PLT_CN')) %>% group_by(CN) %>% summarize(n = n(), avg_status = mean(COND_STATUS_CD)) %>% filter(avg_status == 1)
-
-    ## Note: if we want to use plots that are partially forested, we need to retain 'COND:::CONDPROP_UNADJ'
-    ## and then divide biomass/density at plot level by that number for correct scaling to area surveyed.
-    ## see Github issue #2
+        homogeneous_forested_plots <- state_plot %>% left_join(state_cond, by = c('CN' = 'PLT_CN')) %>%
+            group_by(CN) %>% summarize(n = n(), avg_status = mean(COND_STATUS_CD), avg_origin = mean(STDORGCD)) %>%
+            filter(avg_status == 1, avg_origin == 0)
+    } else homogeneous_forested_plots <- state_plot %>% left_join(state_cond, by = c('CN' = 'PLT_CN')) %>%
+               group_by(CN) %>% summarize(n = n(), avg_status = mean(COND_STATUS_CD)) %>%
+               filter(avg_status == 1)
     
     ## only sampled, forested plots with surveys since changeover in survey design
     state_plot <- state_plot %>% filter(PLOT_STATUS_CD == 1 & INVYR >= earliest_fia_year & INVYR <= latest_fia_year)
 
-    ## only homogeneous condition plots; most mixed plots seem to have
+    ## Only homogeneous condition plots; most mixed plots seem to have
     ## various amounts of non-forested
+
+    ## Note: if we want to use plots that are partially forested, we need to retain 'COND:::CONDPROP_UNADJ'
+    ## and then divide biomass/density at plot level by that number for correct scaling to area surveyed.
+    ## see Github issue #2
+
     state_plot <- state_plot %>% filter(CN %in% homogeneous_forested_plots$CN)
     
     ## PLOTxSTATECDxUNITCDxCOUNTYCD should be a unique plot identifier
@@ -57,9 +62,11 @@ for(state in states){
     
     state_recent <- state_recent[ , vars]
     
-    cat(nrow(state_recent), " live trees since 1999.\n")
+    cat(nrow(state_recent), " live trees in the interval ", earliest_fia_year, "-", latest_fia_year, ".\n")
     fia <- rbind(fia, state_recent)
 }
+
+assert_that(nrow(fia) == 1097212, msg = "unexpected number of trees before exclusions")
 
 nNA <- sum(is.na(fia$SPCD))
 if(nNA)
@@ -77,8 +84,10 @@ l3a_to_l3s <- read_csv(file.path(conversions_data_dir, level3a_to_level3s_file))
 fia <- fia %>% left_join(fia_to_l3a, by = c("SPCD" = "fia_spcd")) %>%
     left_join(l3a_to_l3s, by = c("level3a" = "level3a"))
 
-## Too few Dogwood to treat separately
-fia <- fia %>% mutate(level3s = ifelse(level3s %in% excluded_level3s_OH, "Other hardwood", level3s))
+## Too few of certain taxa to treat separately
+fia <- fia %>% mutate(level3s = ifelse(level3s %in% excluded_level3s, "Other hardwood", level3s))
            
+assert_that(nrow(fia) == 399316, msg = "unexpected number of trees after exclusions")
+
 save(fia, file = file.path(interim_results_dir, 'full_trees.Rda'))
 

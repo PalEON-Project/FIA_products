@@ -6,6 +6,7 @@
 ## blend at midpoint of OH
 
 stop("file not set up yet")
+stop("need to deal with burnin")
 
 library(ncdf4)
 

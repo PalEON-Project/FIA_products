@@ -3,7 +3,7 @@
 require(spam)
 
 runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL, C, Cindices = NULL, town = NULL, townCellOverlap = NULL, townCellIds = NULL,
-                   S, thin, resumeRun, hyperpar = c(-0.5, 0),
+                   S, thin, resumeRun, secondRun = FALSE, hyperpar = c(-0.5, 0),
                    adaptInterval = 100, adaptStartDecay = 3000, nbhdStructure = 'bin',                  
                    outputNcdfName, taxa, numCores = 1, runID = "",
                    dataDir, outputDir) {
@@ -56,11 +56,19 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
     S_keep <- floor(S/thin) 
     S      <- S - S%%S_keep
     
-    if(resumeRun) {
+    if(resumeRun || secondRun) {
         load(file.path(dataDir, paste0('lastState_', runID, '.Rda')))
         .Random.seed <<- .Random.seed
+        if(secondRun) s <- 0
         sampleIterates <- (s+1):S
-        
+
+        alpha_current <- alpha_next
+        eta_current <- eta_next
+        h_current <- h_next
+        mu_current <- mu_next
+        sigma2_current <- sigma2_next
+        tau2_current <- tau2_next
+        if(secondRun) storeIndex <- 1
     } else {
         sampleIterates <- 1:S
         storeIndex <- 1
@@ -72,13 +80,13 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
         tau2store <- matrix(0, S_keep, P)
         if(!nbhdStructure %in% c('bin', 'tps'))
             muStore <- etaStore <- sigma2store
-                                        #alpha_current <- alpha_next <- matrix(0, I, P)
+        ##alpha_current <- alpha_next <- matrix(0, I, P)
         alpha_current <- alpha_next <- matrix(rnorm(nCells*P), nCells, P)
         
         sigma2_current <- sigma2_next <- runif(P, 0.1, 2)
         tau2_current <- tau2_next <- runif(P, 0.1, 2)
         cnt <- table(y)
-                                        # have less common taxa start with larger sigma2
+        ## have less common taxa start with larger sigma2
         sigma2_current[cnt < 2000] <- sigma2_next[cnt < 2000] <- runif(sum(cnt < 2000), 0.5, 2)
         
         # within-cell heterogeneity (across FIA plots)
@@ -89,6 +97,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
             eta_current <- eta_next <- runif(P, 0, 5) # rep(log(3), P)
         }
     }
+    if(secondRun) runID <- paste0(runID, 'b') else runID <- paste0(runID, 'a')
     
     nTreesPerPlot <- plotInfo$n
     
@@ -133,7 +142,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
 
 
   # sample alphas given Ws and hs and sigmas (and mus/etas if relevant)
-    if(!resumeRun) {
+    if(!resumeRun && !secondRun) {
         for(p in 1:P){
             if(!nbhdStructure %in% c('bin', 'tps')) {
                 means <- backsolve(U[[p]], forwardsolve(U[[p]], Wi.pbar_cell_centered[ , p] * nTreesPerCell + mu_current[p]*rowSums(Vinv[[p]])))

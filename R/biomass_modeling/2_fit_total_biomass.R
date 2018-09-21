@@ -31,7 +31,7 @@ if(nrow(cell_full) != nrow(plots_per_cell))
     stop("number of cells with FIA plots not the same as the number of cells with biomass")
 
 ## fit stats model
-biomass_total <- fit(cell_full, newdata = pred_grid_west, k_occ = NULL, k_pot = k_pot_total, return_model = TRUE, unc = TRUE, type_pot = 'log_arith', num_draws = n_stat_samples, save_draws = TRUE, use_bam = TRUE)
+biomass_total <- fit(cell_full, newdata = pred_grid_paleon, k_occ = NULL, k_pot = k_pot_total, return_model = TRUE, unc = TRUE, type_pot = 'arith', num_draws = n_stat_samples, save_draws = TRUE, use_bam = TRUE)
 
 save(biomass_total, file = file.path(interim_results_dir, 'fitted_total_biomass.Rda'))
 

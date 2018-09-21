@@ -26,8 +26,11 @@ for(state in states){
 }
 
 if(.Platform$OS.type == "unix") {
-    info <- system("ls -l", intern=TRUE)
+    ## file.info(list.files()) not working so not cross-platform
+    info <- system(paste0("ls -l ", raw_data_dir, "/"), intern=TRUE)
+    assert_that(length(grep("\\.csv", info)) == length(states)*3,
+              msg = "incorrect number of files downloaded")
     info <- c(paste0("Files downloaded ", date() , " with redownloading set to ", 
                      redownload_FIA_data), info)
-    write(info, file = 'VERSIONS', append = TRUE)
+    write(info, file = file.path(raw_data_dir, 'VERSIONS'), append = TRUE)
 }

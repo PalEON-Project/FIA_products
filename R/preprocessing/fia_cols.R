@@ -1,7 +1,7 @@
 ## readr::read_csv columns specification
 ## This was determined by manually reading in a single TREE and PLOT file for a state using guess_max = 50000 and then using cols(object) and replacing the CN columns with character type since their integer values get close to the maximum integer that can be exactly represented with 8-byte floating points (2^53). Note that the FIA data files treat the CN files as characters but read_csv and read.csv do not respect this.
 
-cols_plot <- cols(
+cols_plot <- cols_only(
   CN = col_character(),
   SRV_CN = col_character(),
   CTY_CN = col_character(),
@@ -58,11 +58,11 @@ cols_plot <- cols(
   INVASIVE_SAMPLING_STATUS_CD = col_integer(),
   INVASIVE_SPECIMEN_RULE_CD = col_integer(),
   DESIGNCD_P2A = col_character(),
-  MANUAL_DB = col_integer(),
+  MANUAL_DB = col_double(),
   SUBPANEL = col_integer()
 )
 
-cols_tree <- cols(
+cols_tree <- cols_only(
   CN = col_character(),
   PLT_CN = col_character(),
   PREV_TRE_CN = col_character(),
@@ -223,7 +223,7 @@ cols_tree <- cols(
   DRYBIO_AG = col_double()
 )
 
-cols_cond = cols(
+cols_cond = cols_only(
   CN = col_character(),
   PLT_CN = col_character(),
   INVYR = col_integer(),

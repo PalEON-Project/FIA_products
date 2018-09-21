@@ -1,3 +1,44 @@
+9/20/18:
+notes from aggregating taxa to get enough data for allometry fitting (done in spring 2018):
+
+## tricky cases from initial use of fia_to_pecan_v0.3.csv:
+## one allometry, lmtd dbh range: 763, 920, 931
+## one allometry: 126, 332, 355, 543, 544, 691, 743, 762, 970
+## two allometry: 93, 241, 731, 827, 835, 901
+## no fitting done: 10, 68, 401, 407, 491, 540, 711, 741, 809, 823, 972 (no component 6)
+## fit failures with R error: 315, 319, 701 - these are because max diam less than cutoff
+## 931 (sassafras) is highly uncertain and giving crazy biomasses, presumably because of limited data and dbh range in (11,14)
+## 355 (serviceberry) gives some outliers
+## 762 (black cherry) gives some outliers
+## 371 (yellow birch) has some outliers but fair amount of allometries
+
+## not_fit <- c(10, 68, 401, 407, 491, 540, 711, 741, 809, 823, 972)
+## fit_failure <- c(315, 319, 701)
+## fit_unstable <- c(355, 762, 763, 931)
+## missing_pecan_taxa <- c(not_fit, fit_failure, fit_unstable)
+
+## tricky cases from fia_to_pecan_v0.4.csv (first pass at v0.4):
+## one allometry: 970;972;974;975;977 (2879 trees),  760;762 (9280 trees),
+## two allometries: 315;471;491;319;355;356;357;931;935;391;701 (657 trees),  315;471;491;319;355;356;357;931;935 (2065 trees)
+## no fitting done: 68;66;67 (827 trees), 600;601;602 (1611 trees)
+
+## These cases from first pass at 0.4 seem to have been dealt with in final v0.4.
+
+
+9/20/18:
+lost one FIA tree in updating data file because a cherry in
+222444899010661 4340      3       19      39    1
+went from 15.8 to 5.8 inches
+so CV was done on very slightly different dataset
+(actually somewhat different because the random number generation shifts when lose a tree, so most of the individual tree biomasses will change)
+
+tree data for CV was: full_trees_with_biomass_used_for_cv.Rda
+
+
+9/20/18:
+running east and west halves for composition in two 150k iterations runs; then will combine manually
+note that I may have forgotten to save the first 150k samples for the hyperparameters
+
 8/30/18:
 combined CV resutls from cv_taxon_biomass.Rda cv_taxon_biomass_high_kocc.Rda
 into cv_taxon_biomass.Rda  and saved old cv_taxon_biomass.Rda  as cv_taxon_biomass_low_kocc.Rda
