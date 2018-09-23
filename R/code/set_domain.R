@@ -1,4 +1,5 @@
-# info on the Albers grid and subsets for the western and eastern composition modeling
+## info on the Albers grid and subsets for the
+## western and eastern composition modeling
 
 ###############################################################
 # Setting full Albers grid ------------------------------------

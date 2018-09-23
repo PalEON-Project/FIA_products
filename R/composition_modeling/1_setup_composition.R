@@ -1,17 +1,18 @@
-## setup for composition, following code in 'composition' and 'composition_fia'
+## Setup raw composition counts for Bayesian modeling,
+## following code in 'composition' and 'composition_fia'
 ## repositories
 
 library(dplyr)
 library(tidyr)
 
+## Count trees in each cell by taxon.
+## note all NAs in level3s are Douglas fir; omitting these
 counts <- fia %>%
     rename(statecd = STATECD, plt_cn = PLT_CN) %>% 
     filter(!is.na(level3s)) %>% 
     group_by(statecd, plt_cn, level3s, x, y, cell) %>%
     summarize(count = n()) %>%
     spread(level3s, count, fill = 0) %>% ungroup()
-
-## note all NAs in level3s are Douglas fir; omitting these
 
 list_of_states <- list(eastern = paleon_states_east,
                        western = paleon_states_west_ohio)
@@ -25,9 +26,10 @@ for(region in c('eastern', 'western')) {
 
     nTaxa <- ncol(data)
     taxaUse <- names(data)
-    taxaUse <- gsub("/", ",", taxaUse)
+    taxaUse <- gsub("/", ",", taxaUse)  ## '/' causes problems in netCDF (netCDF groups)
     taxa <- data.frame(taxonID = 1:nTaxa, taxonName = taxaUse, stringsAsFactors = FALSE)
 
+    ## rectangular subdomain grid (subgrid of full PalEON domain)
     domainX <- eval(as.name(paste0(region, 'DomainX')))
     domainY <- eval(as.name(paste0(region, 'DomainY')))
     m1 <- length(domainX)
@@ -43,31 +45,35 @@ for(region in c('eastern', 'western')) {
     tmp <- plotInfo$cell
     plotInfo <- plotInfo %>% left_join(coord, c('x' = 'x', 'y' = 'y')) %>%
         dplyr::select(plt_cn, x, y, ID, cell)
-    if(!identical(tmp, plotInfo$cell))
-        stop("plotInfo row order not the same as data row order")
+    assert_that(identical(tmp, plotInfo$cell),
+        msg = "plotInfo row order not the same as data row order")
     data <- data[order(plotInfo$ID), ]
     plotInfo <- plotInfo[order(plotInfo$ID), ]
 
+    ## set up neighborhood/graph data structures based on type of MRF being used
+    
     type <- nbhdStructure
     substring(type, 1 ,1) = toupper(substring(type, 1, 1))
     fns <- rep("", 2)
     fns[1] <- paste('graph', type, '-',  m1, 'x', m2, '.csv', sep='')
     fns[2] <- paste('graphCats', type, '-', m1, 'x', m2, '.csv', sep='')
 
-    if(!file.exists(file.path(interim_results_dir, fns[1])) || (nbhdStructure != 'bin' && !file.exists(file.path(interim_results_dir, fns[2])))) {
-        fns <- graphCreate(m1, m2, type = nbhdStructure, dir = interim_results_dir, fn = fns[1], fn_cats = fns[2])
+    if(!file.exists(file.path(interim_results_dir, fns[1])) ||
+       (nbhdStructure != 'bin' && !file.exists(file.path(interim_results_dir, fns[2])))) {
+        fns <- graphCreate(m1, m2, type = nbhdStructure, dir = interim_results_dir,
+                           fn = fns[1], fn_cats = fns[2])
     } 
 
     nbhd <- graphRead(fns[1], fns[2], m1, m2, type = nbhdStructure, dir = interim_results_dir)
 
     if(!nbhdStructure %in% c('bin', 'tps')) {  
-                                        # remove boundary stuff for now while wait to hear from Finn about boundary correction
+        ## remove boundary stuff given not sure what boundary correction should be (never heard back from Finn Lindgen)
         nbhd@entries[nbhd@entries %in% c(-4, -6)] <- -8
         nbhd@entries[nbhd@entries %in% c(4, 10, 11, 18, 19)] <- 20
     }
     if(nbhdStructure == "lindgren_nu1" || nbhdStructure == "tps") {
         nbhdIndices <- list()
-                                        # determine which elements correspond to what types of neighbors for fast filling in MCMC
+        ## determine which elements correspond to what types of neighbors for fast filling in MCMC
         nbhdIndices$self <- which(nbhd@entries == 20)
         nbhdIndices$cardNbr <- which(nbhd@entries == -8)
         nbhdIndices$otherNbr <- which(nbhd@entries %in% c(1,2))
@@ -100,6 +106,7 @@ for(region in c('eastern', 'western')) {
 
     outpath <- file.path(interim_results_dir, paste0('composition_raw_', region, '.Rda'))
     cat("Writing data file: ", outpath, "\n")
-    save(nbhd, nbhdIndices, m1, m2, nTaxa, nCells, data, coord, taxa, plotInfo, dataTabular, file = outpath)
+    save(nbhd, nbhdIndices, m1, m2, nTaxa, nCells, data, coord, taxa, plotInfo, dataTabular,
+         file = outpath)
 }
 

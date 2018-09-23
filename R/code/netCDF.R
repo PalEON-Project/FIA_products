@@ -1,4 +1,5 @@
 make_albers_netcdf <- function(name = NULL, units = '', longname = '', fn = NULL, dir = '', x, y, taxa, num_samples) {
+    ## Make empty netCDF files for final output
   if(is.null(fn)) stop("makeAlbersNetCDF: requires filename as argument.")
 
   x_dim <-  ncdim_def("x", "meters_east", x, longname = 'x coordinate of grid cell centroid in Albers projection (Great Lakes St Lawrence Albers [Proj4 +init=epsg:3175])')

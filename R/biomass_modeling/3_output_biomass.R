@@ -1,5 +1,12 @@
 ## Outputs a netCDF file with dimensions of x, y, samples and
-## variables for total biomass and biomass of each taxon
+## variables for total biomass and biomass of each taxon.
+## For convenience we produce a netCDF with simply the point
+## estimates as well so that users do not have to calculate
+## the mean across samples.
+
+## Could include both point estimate and standard deviation
+## in one netCDF with those playing the role of 'samples',
+## but would need to modify make_albers_netcdf.
 
 library(ncdf4)
 
@@ -16,39 +23,36 @@ for(k in seq_along(biomass_taxon))
 taxa <- names(biomass_taxon)
 taxaNames <- gsub("/", ",", taxa)  ## netCDF interprets / as 'groups'
 
-output_netcdf_name <- paste0("FIA_biomass_western_v", product_version, ".nc")
-output_netcdf_name_point <- paste0("FIA_biomass_western_point_v", product_version, ".nc")
+output_netcdf_name <- paste0("FIA_biomass_v", product_version, ".nc")
+output_netcdf_name_point <- paste0("FIA_biomass_point_v", product_version, ".nc")
 
 x_grid <- sort(unique(pred_grid$x))
 y_grid <- sort(unique(pred_grid$y))
 
-westernDomainX <- 1:146
-westernDomainY <- 1:180
-
-x_grid <- x_grid[westernDomainX]
-y_grid <- y_grid[westernDomainY]
 x_res <- length(x_grid)
 y_res <- length(y_grid)
 
-make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare', fn = output_netcdf_name, dir = output_dir, x = x_grid, y = y_grid, taxa = c('total', taxaNames), num_samples = n_stat_samples)
+make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare', fn = output_netcdf_name,
+                   dir = output_dir, x = x_grid, y = y_grid, taxa = c('total', taxaNames),
+                   num_samples = n_stat_samples)
 
-make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare', fn = output_netcdf_name_point, dir = output_dir, x = x_grid, y = y_grid, taxa = c('total', taxaNames), num_samples = 0)
+make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare', fn = output_netcdf_name_point,
+                   dir = output_dir, x = x_grid, y = y_grid, taxa = c('total', taxaNames),
+                   num_samples = 0)
 
 output_netcdf <- nc_open(file.path(output_dir, output_netcdf_name), write = TRUE)
 output_netcdf_point <- nc_open(file.path(output_dir, output_netcdf_name_point), write = TRUE)
 
-mask <- nc_open(file.path(conversions_data_dir, 'paleonmask.nc'))
-regions <- ncvar_get(mask, 'subregion', c(1,1),c(-1,-1))
-wat <- ncvar_get(mask, 'water', c(1,1),c(-1,-1))
-dom <- ncvar_get(mask, 'domain', c(1,1),c(-1,-1))
-
 full <- array(as.numeric(NA), c(x_res, y_res, n_stat_samples))
 full_point <- array(as.numeric(NA), c(x_res, y_res))
+
+## add total biomass to netCDF
 
 locs <- biomass_total$locs
 preds <- biomass_total$pred[ , 1]
 draws <- biomass_total$draws
 
+## get output into array format from data frame format
 for(i in seq_len(nrow(locs))) {
     full_point[which(locs[i,1] == x_grid), which(locs[i,2] == y_grid)] <- preds[i]
     full[which(locs[i,1] == x_grid), which(locs[i,2] == y_grid), ] <- draws[i, ]
@@ -57,6 +61,8 @@ for(i in seq_len(nrow(locs))) {
 
 ncvar_put(output_netcdf, 'total', full, start = c(1, 1, 1), count = c(x_res, y_res, n_stat_samples))
 ncvar_put(output_netcdf_point, 'total', full_point, start = c(1, 1), count = c(x_res, y_res))
+
+## add taxon biomass to netCDF
 
 for(p in seq_along(taxa)) {
     locs <- biomass_taxon[[p]]$locs

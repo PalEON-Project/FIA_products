@@ -1,8 +1,14 @@
-## copied from composition_fia (which includes plot effect, unlike PLS composition code)
+## Code for MCMC for composition modeling
+## Obtained from Chris' composition_fia folder used for initial FIA composition
+## modeling in late 2016.
+## This code includes plot effect, unlike PLS composition code.
+
+## Note this code is not well-documented.
 
 require(spam)
 
-runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL, C, Cindices = NULL, town = NULL, townCellOverlap = NULL, townCellIds = NULL,
+runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL, C, Cindices = NULL,
+                   town = NULL, townCellOverlap = NULL, townCellIds = NULL,
                    S, thin, resumeRun, secondRun = FALSE, hyperpar = c(-0.5, 0),
                    adaptInterval = 100, adaptStartDecay = 3000, nbhdStructure = 'bin',                  
                    outputNcdfName, taxa, numCores = 1, runID = "",
@@ -89,7 +95,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
         ## have less common taxa start with larger sigma2
         sigma2_current[cnt < 2000] <- sigma2_next[cnt < 2000] <- runif(sum(cnt < 2000), 0.5, 2)
         
-        # within-cell heterogeneity (across FIA plots)
+        ## within-cell heterogeneity (across FIA plots)
         h_current <- h_next <- matrix(rnorm(nPlots*P, 0, rep(sqrt(tau2_current), each = nPlots)), nPlots, P)
         
         if(!nbhdStructure %in% c('bin', 'tps')) {
@@ -121,7 +127,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
             Vinv[[p]]@entries[Cindices$self] <- 4 + a*a
             Vinv[[p]]@entries[Cindices$cardNbr] <- -2 * a
             Vinv[[p]] <- Vinv[[p]] / (sigma2_current[p]*4*pi/exp(2*eta_current[p]))
-                                        # do initial Cholesky based on sparseness pattern, with first taxon
+                                        ## do initial Cholesky based on sparseness pattern, with first taxon
             B <- Vinv[[p]]
             diag(B) <- diag(B) + nTreesPerCell
             if(!is.spam(B)) warning("B is not spam")
@@ -141,7 +147,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
     Uprop <- chol(B)
 
 
-  # sample alphas given Ws and hs and sigmas (and mus/etas if relevant)
+  ## sample alphas given Ws and hs and sigmas (and mus/etas if relevant)
     if(!resumeRun && !secondRun) {
         for(p in 1:P){
             if(!nbhdStructure %in% c('bin', 'tps')) {
@@ -154,7 +160,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
         }
     }
 
-  # Gathering some indices outside the loop
+  ## Gathering some indices outside the loop
   
     treeInd <- treeNonInd <- cellInd <- cellNonInd <- plotInd <- plotNonInd <- WtreeNonIndInfo <- list() 
     
@@ -177,38 +183,38 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
     count <- 0
     for(s in sampleIterates){
         count <- count + 1
-                                        # sample the latent W's
+                                        ## sample the latent W's
         for(p in 1:P){
             if(nTreeInd[[p]] == 1){
-                                        # need to use max, since don't have a matrix in this case; just use simple R version rtruncnorm
+                                        ## need to use max, since don't have a matrix in this case; just use simple R version rtruncnorm
                 W[treeInd[[p]], p] <- rtruncnorm(nTreeInd[[p]], alpha_current[cellInd[[p]], p] + h_current[plotInd[[p]], p],
                                                  max(W[treeInd[[p]], -p]), Inf) 
             } else {
-                                        # since this calc involves smaller objects, do simple rowmax_cpp as rowmax2_cpp doesn't help here
+                                        ## since this calc involves smaller objects, do simple rowmax_cpp as rowmax2_cpp doesn't help here
                 W[treeInd[[p]], p] <- rtruncnorm_cpp(nTreeInd[[p]], alpha_current[cellInd[[p]], p] + h_current[plotInd[[p]], p],
                                                      rowmax_cpp(W[treeInd[[p]],-p]), Inf)
             }
             if(numCores > 1) {
-                                        # this saves another 0.5 s or so (for PLS, not directly relevant here for FIA), but means that RNG is not same as with single core operation
+                                        ## this saves another 0.5 s or so (for PLS, not directly relevant here for FIA), but means that RNG is not same as with single core operation
                 
                 W[treeNonInd[[p]], p] <- rtruncnorm_cpp_mp(nTreeNonInd[[p]], alpha_current[cellNonInd[[p]], p] + h_current[plotNonInd[[p]], p],
                                                            -Inf, rowmax2_cpp_mp(W, treeNonInd[[p]], p))
-                                        # rowmax2_cpp_mp does not seem to help in terms of speed - 3.4sec/it vs 3.7sec per it for PLS code (not directly relevant here for FIA)
+                                        ## rowmax2_cpp_mp does not seem to help in terms of speed - 3.4sec/it vs 3.7sec per it for PLS code (not directly relevant here for FIA)
             } else {
-                                        # non-MP version
-                #W[treeNonInd[[p]], p] <- rtruncnorm_cpp(nTreeNonInd[[p]], alpha_current[cellNonInd[[p]], p] + h_current[plotNonInd[[p]], p],
-                #                                       -Inf, rowmax2_cpp(W, treeNonInd[[p]], p))
-                # recognizing I know what the max is simply from the y's
+                                        ## non-MP version
+                ##W[treeNonInd[[p]], p] <- rtruncnorm_cpp(nTreeNonInd[[p]], alpha_current[cellNonInd[[p]], p] + h_current[plotNonInd[[p]], p],
+                ##                                       -Inf, rowmax2_cpp(W, treeNonInd[[p]], p))
+                ## recognizing I know what the max is simply from the y's
                 W[treeNonInd[[p]], p] <- rtruncnorm_cpp(nTreeNonInd[[p]], alpha_current[cellNonInd[[p]], p] + h_current[plotNonInd[[p]], p],
                                                         -Inf, W[WtreeNonIndInfo[[p]]])
             }
             
         }
         
-        # summarize the W's
+        ## summarize the W's
         Wi.pbar_cell_centered <- compute_cell_sums_cpp(W,cell,nCells,P)/c(nTreesPerCell+1*(nTreesPerCell==0)) - compute_cell_sums_cpp(h_current*nTreesPerPlot,plotInfo$ID,nCells,P)/c(nTreesPerCell+1*(nTreesPerCell==0))
 
-       # joint mu-alpha sample
+       ## joint mu-alpha sample
         if(!nbhdStructure %in% c('bin', 'tps')) {
             for(p in 1:P){
                 
@@ -230,7 +236,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
                 }
                 if(accept) {
                     numAcceptMu[p] <- numAcceptMu[p] + 1
-                                        # sample alphas
+                                        ## sample alphas
                     means <- backsolve(U[[p]], UtWi)
                     alpha_next[,p] <- means + backsolve(U[[p]], rnorm(nCells))
                 } else {
@@ -243,29 +249,29 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
             alpha_current  <- alpha_next
     
             for(p in seq_len(P)) {
-                                        # update alphas and etas/sigma2s    
+                                        ## update alphas and etas/sigma2s    
                 prop <- adaptScale[p] * adaptedL[[p]] %*% rnorm(2)
                 sigma2_next[p] <- exp(log(sigma2_current[p]) + prop[1])
                 eta_next[p] <- eta_current[p] + prop[2]
                 if(sigma2_next[p] < 0.0001 || eta_next[p] < etaBounds[1] || eta_next[p] > etaBounds[2])  {
                     accept <- FALSE 
                 } else { 
-                                        #           B <- Vinv[[p]]
-                                        #           diag(B) <- diag(B) + n
-                                        #           update.spam.chol.NgPeyton(U[[p]], B)
-                                        #           update.spam.chol.NgPeyton(Uc[[p]], Vinv[[p]])
+                                        ##           B <- Vinv[[p]]
+                                        ##           diag(B) <- diag(B) + n
+                                        ##           update.spam.chol.NgPeyton(U[[p]], B)
+                                        ##           update.spam.chol.NgPeyton(Uc[[p]], Vinv[[p]])
                     denominator <-  - sum(log(diag(U[[p]]))) + sum(log(diag(Uc[[p]]))) + eta_current[p]
                     UtWi <- forwardsolve(U[[p]], Wi.pbar_cell_centered[ , p] * nTreesPerCell + mu_current[p] * rowSums(Vinv[[p]]))
                     denominator <- denominator + 0.5*sum(UtWi^2) - 0.5*sum(Vinv[[p]])*mu_current[p]^2 + 0.5*log(sigma2_current[p])
                     
-                                        # terms for forward proposal
+                                        ## terms for forward proposal
                     VinvProp <- C  # start with TPS
                     a <- 4 + 1/exp(2*eta_next[p])  # a = 4 + kappa^2 = 4 + (1/rho)^2 = 4 + (1/exp(eta)^2)
                     VinvProp@entries[Cindices$self] <- 4 + a*a
                     VinvProp@entries[Cindices$cardNbr] <- -2 * a
                     VinvProp <- VinvProp / (sigma2_next[p]*4*pi/exp(2*eta_next[p]))
-                                        #          Vinv <- Vinv / sigma2_next[p]
-                                        # simplify as Vinv from above *sigma2_current[p]/sigma2_next[p]
+                                        ##          Vinv <- Vinv / sigma2_next[p]
+                                        ## simplify as Vinv from above *sigma2_current[p]/sigma2_next[p]
                     
                     B <- VinvProp
                     diag(B) <- diag(B) + nTreesPerCell
@@ -281,20 +287,20 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
                 }
                 if(accept) {
                     numAcceptSigmaEta[p] <- numAcceptSigmaEta[p] + 1
-                                        # sample alphas
+                                        ## sample alphas
                     means <- backsolve(Uprop, UtWi)
                     alpha_next[,p] <- means + backsolve(Uprop, rnorm(nCells))
                     
                     U[[p]] <- Uprop
                     Uc[[p]] <- UcProp
-                                        # with update to spam 1.0.1 the machinations below no longer needed
-                                        #U[[p]]@entries <- Uprop@entries
-                                        #U[[p]]@entries[1] <- U[[p]]@entries[1] # force copy
-                                        # since .Fortran in update.spam in 0.41-0 does not do a copy
-                                        # and R 3.1 doesn't recognize that a copy needs to be made
-                                        # only reason 3.0 does do copy is because it's in a list...!
-                                        #Uc[[p]]@entries <- UcProp@entries
-                                        #Uc[[p]]@entries[1] <- Uc[[p]]@entries[1]
+                                        ## with update to spam 1.0.1 the machinations below no longer needed
+                                        ##U[[p]]@entries <- Uprop@entries
+                                        ##U[[p]]@entries[1] <- U[[p]]@entries[1] ## force copy
+                                        ## since .Fortran in update.spam in 0.41-0 does not do a copy
+                                        ## and R 3.1 doesn't recognize that a copy needs to be made
+                                        ## only reason 3.0 does do copy is because it's in a list...!
+                                        ##Uc[[p]]@entries <- UcProp@entries
+                                        ##Uc[[p]]@entries[1] <- Uc[[p]]@entries[1]
                     Vinv[[p]] <- VinvProp
                 } else {
                     sigma2_next[p] <- sigma2_current[p]
@@ -317,12 +323,12 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
                     accept <- FALSE 
                 } else {
                     
-                                        # terms for reverse proposal
+                                        ## terms for reverse proposal
                     denominator <- -(nCells-dfAdj)*log(sigma2_current[p])/2 - sum(log(diag(U[[p]]))) + 0.5*log(sigma2_current[p])
                     UtWi <- forwardsolve(U[[p]], Wi.pbar_cell_centered[ , p] * nTreesPerCell)
                     denominator <- denominator + 0.5*sum(UtWi^2)
                     
-                                        # terms for forward proposal
+                                        ## terms for forward proposal
                     Vinv <- C / sigma2_next[p]
                     B <- Vinv
                     diag(B) <- diag(B) + nTreesPerCell
@@ -337,16 +343,16 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
                 }
                 if(accept) {
                     numAcceptSigma2[p] <- numAcceptSigma2[p] + 1
-                                        # sample alphas
+                                        ## sample alphas
                     means <- backsolve(Uprop, UtWi)
                     alpha_next[,p] <- means + backsolve(Uprop, rnorm(nCells))
                     U[[p]] <- Uprop
-                                        # with update to spam 1.0.1 these steps not needed
-                                        #U[[p]]@entries <- Uprop@entries
-                                        #U[[p]]@entries[1] <- U[[p]]@entries[1] # force copy
-                                        # since .Fortran in update.spam in 0.41-0 does not do a copy
-                                        # and R 3.1 doesn't recognize that a copy needs to be made
-                                        # only reason 3.0 does do copy is because it's in a list...!
+                                        ## with update to spam 1.0.1 these steps not needed
+                                        ##U[[p]]@entries <- Uprop@entries
+                                        ##U[[p]]@entries[1] <- U[[p]]@entries[1] ## force copy
+                                        ## since .Fortran in update.spam in 0.41-0 does not do a copy
+                                        ## and R 3.1 doesn't recognize that a copy needs to be made
+                                        ## only reason 3.0 does do copy is because it's in a list...!
                 } else {
                     sigma2_next[p] <- sigma2_current[p]
                     alpha_next[,p] <- alpha_current[,p]
@@ -355,9 +361,9 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
             sigma2_current <- sigma2_next
             alpha_current  <- alpha_next
             
-                                        # alpha and sigma2 non-joint samples
+                                        ## alpha and sigma2 non-joint samples
             if(TRUE) {
-                                        # for the moment include the non-joint sample as well so that alphas can move on their own; this adds about a second per iteration
+                                        ## for the moment include the non-joint sample as well so that alphas can move on their own; this adds about a second per iteration
                 for(p in 1:P){
                     if(!nbhdStructure %in% c('bin', 'tps')) {
                         means <- backsolve(U[[p]], forwardsolve(U[[p]], Wi.pbar_cell_centered[ , p] * n + mu_current[p]*rowSums(Vinv[[p]])))
@@ -370,11 +376,11 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
                     if(!nbhdStructure %in% c('bin', 'tps')) {
                         ss <- sigma2_current[p] * t(alpha_next[,p] - mu_current[p]) %*% (Vinv[[p]] %*% (alpha_next[,p] - mu_current[p]))
                         sigma2_next[p] <- 1 / rgamma(1, shape = hyperpar[1] + (nCells)/2, scale = 1/(.5*ss + hyperpar[2])) 
-                                        # need nCells-1 because of the zero eigenvalue in the precision matrix (but not for Lindgren)
+                                        ## need nCells-1 because of the zero eigenvalue in the precision matrix (but not for Lindgren)
                     } else {
                         ss <- sigma2_current[p] * t(alpha_next[,p]) %*% (Vinv %*% alpha_next[,p])
                         sigma2_next[p] <- 1 / rgamma(1, shape = hyperpar[1] + (nCells-dfAdj)/2, scale = 1/(.5*ss + hyperpar[2])) 
-                                        # need nCells-1 because of the zero eigenvalue in the precision matrix
+                                        ## need nCells-1 because of the zero eigenvalue in the precision matrix
                     }
                     
                     if(is.na(sigma2_next[p])) { # sigma2 too small
@@ -398,7 +404,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
         
         Wi.pbar_plot_centered <-compute_cell_sums_cpp(W,plot,nPlots,P)/c(nTreesPerPlot +1*(nTreesPerPlot == 0)) - alpha_current[plotInfo$ID, ]
         
-        # sample h and tau2
+        ## sample h and tau2
         Wcentered <- W - alpha_current[cell, ]
         for(p in 1:P){
             
@@ -412,7 +418,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
                 h_next[, p] <- rnorm(nPlots, hMean, sqrt(hV))
                 denominator <- 0.5*log(tau2_current[p]) +
                     sum(dnorm(h_next[ , p], hMean, sqrt(hV), log = TRUE)) -
-                    # next line faster than using dnorm
+                    ## next line faster than using dnorm
                     0.5*sum((Wcentered[ , p] - h_current[plot, p])^2) +
                     sum(dnorm(h_current[ , p], 0, sqrt(tau2_current[p]), log = TRUE))
                                     
@@ -436,9 +442,9 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
         tau2_current <- tau2_next
         h_current  <- h_next
         
-      # h and tau2 non-joint samples
+      ## h and tau2 non-joint samples
         if(TRUE) {
-                                        # for the moment include the non-joint sample as well so that alphas can move on their own; this adds about a second per iteration
+                                        ## for the moment include the non-joint sample as well so that alphas can move on their own; this adds about a second per iteration
             for(p in 1:P){
                 hV <- 1 / (nTreesPerPlot + 1/tau2_current[p])
                 hMean <- nTreesPerPlot * Wi.pbar_plot_centered[ , p] * hV
@@ -509,7 +515,7 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
                     gamma2     <- 1/ (      1        + 3)^(.8) #adapt every time as if it's the first time
                 }
                 
-                                        # update prop covariance (loop thru taxa)
+                                        ## update prop covariance (loop thru taxa)
                 for(p in seq_len(P)) {
                     newCov <- cov(adaptVals[[p]])
                     adaptVals[[p]] <- matrix(0, adaptInterval, 2)
@@ -536,7 +542,8 @@ runMCMC <-function(y, cell = NULL, plot = NULL, plotInfo = NULL, gridInfo = NULL
 }
 
 drawProportions <- function(latentNcdfPtr, outputNcdfPtr, numMCsamples = 1000, numInputSamples, secondThin = 1, nCells, taxa){
-  require(doParallel)
+    ## draw composition proportions based on the latent variable representation
+    require(doParallel)
   registerDoParallel(numCoresForProps)
 
   samples <- seq(1, numInputSamples, by = secondThin)

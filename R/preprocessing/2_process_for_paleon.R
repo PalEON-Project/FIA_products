@@ -1,4 +1,4 @@
-## Extract tree-level data for all FIA plots satisfying the PalEON criteria
+## Extract tree-level data for all FIA plots satisfying the PalEON criteria,
 ## including that the data is from the most recent of the surveys for a given plot
 
 library(dplyr)
@@ -10,6 +10,7 @@ library(readr)
 ## Enforce column type information. See notes in fia_cols.R for why this is important.
 source(file.path('preprocessing','fia_cols.R'))
 
+## Variables to keep for our analyses:
 vars = c('PLT_CN', 'PLOT', 'UNITCD', 'COUNTYCD', 'STATECD', 'SUBP', 'LAT', 'LON', 'INVYR', 
   'TREE', 'SPCD', 'DIA', 'STATUSCD', 'TPA_UNADJ', 'DRYBIO_AG')
 fia = data.frame(matrix(NA, nrow = 0, ncol = length(vars)))
@@ -53,7 +54,7 @@ for(state in states){
     state_tree <- read_csv(file.path(raw_data_dir, paste0(state, "_TREE.csv")),
                            col_types = cols_tree, progress = FALSE)
     
-    ## only live trees with non-NA diameters, then match to plot info
+    ## Only live trees with non-NA diameters, then match to plot info
     ## note that only CN is needed for matching but use of others prevents duplicated fields in result
     state_recent <- state_tree %>% filter(STATUSCD == 1 & !is.na(DIA)) %>%
         inner_join(state_plot, by = c("PLT_CN" = "CN", "PLOT"="PLOT", "INVYR" = "INVYR",
@@ -72,11 +73,11 @@ nNA <- sum(is.na(fia$SPCD))
 if(nNA)
     warning("Found ", nNA, " missing taxon codes.")
 
+## Only trees > 8 inches DBH
 fia <- fia %>% filter(DIA >= diameter_cutoff_inches)
 fia <- fia %>% mutate(DIA_CM = DIA / cm_to_inch)
 
 ## add PalEON level3s taxon info
-
 fia_to_l3a <- read_csv(file.path(conversions_data_dir, fia_to_level3a_file)) %>%
     dplyr::select('fia_spcd','level3a')
 l3a_to_l3s <- read_csv(file.path(conversions_data_dir, level3a_to_level3s_file)) %>%

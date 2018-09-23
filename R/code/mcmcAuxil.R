@@ -1,3 +1,4 @@
+## Functions used in MCMC sampling including Rcpp functions for faster computation.
 ## copied from composition and composition_fia folders (same file in each)
 
 require(Rcpp)

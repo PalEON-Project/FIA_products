@@ -5,6 +5,8 @@
 
 product_version=0.999
 
+use_original_R_package_versions=1
+
 ## directory locations: these default to ../data/{points,conversions,allom}, code, and ../output in master.R
 raw_data_dir=""
 conversions_data_dir=""
@@ -13,6 +15,7 @@ code_dir=""
 output_dir=""
 interim_results_dir=""
 
+## overwrite FIA data already downloaded?
 redownload_FIA_data=0
 
 ## PEcAn versions as of 2018-09-19
@@ -22,17 +25,18 @@ pecan_modules_allometry_commit="ad3b0cb"
 ## pecan_base_logger_commit="3d6cbba"
 ## pecan_modules_allometry_commit="7064209"
 
-## data files
+## data files: 2nd and 3rd run files are extra locations we got
+## from USFS after later emails - see Github issue #3
 nrs_coordinates_file="NRS_actual_coords_forested_plots.xlsx"
 nrs_coordinates_file_run2="NRS_actual_coords_forested_plots_2nd_run.xlsx"
 nrs_coordinates_file_run3="NRS_actual_coords_forested_plots_3rd_run.xlsx"
 
-## conversion files
+## taxon conversion files
 fia_to_pecan_conversion_file="fia_to_pecan_v0.4.csv"
-fia_plot_to_paleon_gridcell_file="FIA_raster_cell_albers.csv"
 fia_to_level3a_file="fia_to_level3a_v0.5.csv"
 level3a_to_level3s_file="level3a_to_level3s_v0.4.csv"
-
+## map FIA plots to PalEON grid cells
+fia_plot_to_paleon_gridcell_file="FIA_raster_cell_albers.csv"
 
 ## data earlier than 1999 from different survey design and
 ## use of it could result in using data from the same plot twice
@@ -40,7 +44,8 @@ level3a_to_level3s_file="level3a_to_level3s_v0.4.csv"
 earliest_fia_year=1999
 latest_fia_year=2016
 
-## At Dave Moore's suggestion, we include plots with artificial regeneration
+## At Dave Moore's suggestion, we include (i.e., don't exclude)
+## plots with artificial regeneration
 exclude_plantation=0
 
 ## unit conversions
@@ -72,36 +77,43 @@ cv_max_density=600
 
 #set to 0 to use all cores on machine or all cores provided through SLURM scheduler
 n_cores=0
-# set to 1 to use doMPI
+# set to 1 to use doMPI to parallelize across multiple nodes of a cluster
 use_mpi=0
 
-## maximum degrees of freedom for spatial statistical smoothing
+## maximum degrees of freedom for spatial statistical smoothing for biomass
+## these values are determined based on running CV code in
+## biomass_modeling/1_cv...R
 k_pot_total=2500
-
 k_occ_taxon=2500
 k_pot_taxon=2500
+## number of quasi-Bayesian samples to obtain from biomass fitting
 n_stat_samples=250
 
+#######################################
 ## settings for composition modeling
+#######################################
+
 runID=0
 
 nbhdStructure="bin"  # bin, lindgren_nu1, tps
 
-# MCMC sampling
-composition_region="eastern"
-do_mcmc=TRUE
-do_draws=FALSE
-S=150000
+runName='first150k' # 'first150k'
+
+## MCMC sampling
+composition_region="western"
+S=150000     ## final analyses used concatentation of two 150k-long runs
 burnin=25000
 thin=500  # thinning applies to all S not just S-burnin
-resumeRun=FALSE
-secondRun=TRUE
-numCoresForProps=4 # number of cores to use for drawing final proportions (no parallelization used in MCMC)
+resumeRun=FALSE   # if a run is interrupted; may not work if in middle of second run
+secondRun=TRUE    # see above about two runs
+numCoresForProps=8 # number of cores to use for drawing final proportions (no parallelization used in MCMC)
 numSamplesForProps=10000
 
 buffer=0
 seed=1
 
+## CV info for composition modeling (we have never used CV for FIA composition
+## only for PLS composition)
 cv_composition=FALSE
 cellHoldOutPct=0.95
 treeHoldOutPct=0.05

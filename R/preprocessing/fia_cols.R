@@ -1,5 +1,10 @@
 ## readr::read_csv columns specification
-## This was determined by manually reading in a single TREE and PLOT file for a state using guess_max = 50000 and then using cols(object) and replacing the CN columns with character type since their integer values get close to the maximum integer that can be exactly represented with 8-byte floating points (2^53). Note that the FIA data files treat the CN files as characters but read_csv and read.csv do not respect this.
+## This was determined by manually reading in a single TREE, COND, and PLOT file for a state using guess_max = 50000 and then using cols(object) and replacing the CN columns with character type since their integer values get close to the maximum integer that can be exactly represented with 8-byte floating points (2^53). Note that the FIA data files treat the CN files as characters but read_csv and read.csv do not respect this.
+
+## As of September 2018 (compared to January 2018), the FIA data files have
+## additional new columns - we use "cols_only()" to avoid reading those in
+## as they are not needed for our analysis and would require us to do a bit
+## more work to indicate their column types.
 
 cols_plot <- cols_only(
   CN = col_character(),

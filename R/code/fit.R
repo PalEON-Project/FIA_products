@@ -1,3 +1,5 @@
+## Code for fitting occupancy and potential biomass/density models.
+
 ## This code copied from PLS_products repository. Do not modify without
 ## careful thought as to why this should diverge from the PLS version.
 
@@ -5,13 +7,17 @@
 
 library(mgcv)
 
-fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_total = 'points_total', points_occ = 'points_occ', weight = points_occ, avg = 'avg', geom_avg = 'geom_avg', gamma = 1, units = 'm', use_bam = FALSE, type_pot = 'arith', return_model = FALSE, save_draws = FALSE, num_draws = 250, bound_draws = TRUE) {
+fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_total = 'points_total',
+                points_occ = 'points_occ', weight = points_occ, avg = 'avg', geom_avg = 'geom_avg',
+                gamma = 1, units = 'm', use_bam = FALSE, type_pot = 'arith', return_model = FALSE,
+                save_draws = FALSE, num_draws = 250, bound_draws = TRUE) {
     ## fits occ and pot components for single k values, with uncertainty if desired OR
     ## fits one or both components for one or more k values, without uncertainty
     
     if(!type_pot %in% c('arith', 'log_arith', 'geom'))
         stop("type_pot must be one of 'arith', 'log_arith', 'geom'")
 
+    ## bam() handles big datasets more quickly and seems to be more numerically stable.
     if(use_bam)
         fitter <- bam else fitter <- gam
     
@@ -110,17 +116,22 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
                 draws_logocc <- -log(1 + exp(-draws_linpred)) # log scale to add to log pot result
                 if(bound_draws) {
                     draws_logocc_orig <- draws_logocc
-                    ## two problematic cases:
-                    ## draws_linpred can have high variance near boundary, where value of draws_linpred is very negative (so occ=0)
-                    ## individual draws then can have high occ in those areas
-                    ## draws_linpred can have high variance in small areas producing very positive linpred values corresponding to very small pred_occ values
+                    ## Draws_linpred can have high variance near boundary,
+                    ## where value of draws_linpred is very negative (so occ=0)
+                    ## individual draws then can have high occ in those areas.
+                    ## 
+                    ## Draws_linpred can have high variance in small areas producing very positive
+                    ## linpred values corresponding to very small pred_occ values.
+                    ## 
+                    ## Hacky fix that seems reasonable: draws bigger than 5x point estimate of occupancy
+                    ## replaced with point prediction. 
                     log_predocc_plus5 <- log(5) + log(pred_occ)
                     draws_logocc <- apply(draws_logocc, 2, function(x) {
                         x[x > log_predocc_plus5] <- log(pred_occ[x > log_predocc_plus5])
                         return(x)})
                     ## address numerical issue that seems to arise
                     ## (e.g., central MI in total biomass)
-                    ## that produces some draws where Pr(occ)=0
+                    ## that produces some draws where Pr(occ)=0 but point prediction is 1
                     draws_logocc[pred_occ > 0.999] <- 0
                 } else draws_logocc_orig <- NULL
             } else draws_logocc <- draws_logocc_orig <- 0
@@ -131,7 +142,7 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
             draws_coef <- rmvn(num_draws , coef(model_pot), model_pot$Vp) 
             draws_logpot <- Xp %*% t(draws_coef)
             if(type_pot == 'arith') {
-                draws_logpot[draws_logpot < 0] <- 0.01
+                draws_logpot[draws_logpot < 0] <- 0.01 # make sure no negative biomass values
                 draws_logpot <- log(draws_logpot)
             }
             
@@ -140,12 +151,6 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
             pp.sd <- apply(draws, 1, sd)
             if(!save_draws)
                 draws <- NULL
-            if(FALSE) {  ## not clear we want to do this
-                ## zero out uncertainty outside of range boundary where weird things are happening
-                pp.sd[pp.sd/result > 2 & result < 1] <- 0
-                
-                cat("Note that the Bayesian uncertainty in areas well outside of the range of a taxon has unreasonably large uncertainty, likely due to numerical issues in estimating very small probabilities. Uncertainty in these locations has been set to zero artificially.\n")
-            }
             pred <- data.frame(mean = pred, sd = pp.sd)
         }
     } else {
@@ -165,37 +170,6 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
 }
 
 
-fit_cv_total <- function(cell_full, k_occ = NULL, k_pot) {
-    if(!is.null(k_occ)) {
-        pred_occ <- matrix(0, nrow(cell_full), length(k_occ))
-        dimnames(pred_occ)[[2]] <- k_occ
-    } else pred_occ <- matrix(1, nrow(cell_full), 1)
-
-    pred_pot_arith <- pred_pot_larith <- matrix(0, nrow(cell_full), length(k_pot))
-    dimnames(pred_pot_arith)[[2]] <- dimnames(pred_pot_larith)[[2]] <- k_pot
-    
-    n_folds <- max(cell_full$fold)
-    output <- foreach(i = seq_len(n_folds)) %dopar% {
-        train <- cell_full %>% filter(fold != i)
-        test <- cell_full %>% filter(fold == i)
-
-        if(!is.null(k_occ)) {
-            po <- fit(train, newdata = test, k_occ = k_occ, unc = FALSE, use_bam = TRUE)
-        } else po <- NULL
-        ppa <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'arith', unc = FALSE, use_bam = TRUE)
-        ppl <- fit(train, newdata = test, k_pot = k_pot, type_pot = 'log_arith', unc = FALSE, use_bam = TRUE)
-        cat("n_fold: ", i, " ", date(), "\n")
-        list(po, ppa, ppl)
-    }
-    for(i in seq_len(n_folds)) {
-        if(!is.null(k_occ)) {
-            pred_occ[cell_full$fold == i, ] <- output[[i]][[1]]$pred_occ
-        } 
-        pred_pot_arith[cell_full$fold == i, ] <- output[[i]][[2]]$pred_pot
-        pred_pot_larith[cell_full$fold == i, ] <- output[[i]][[3]]$pred_pot
-    }
-    return(list(pred_occ = pred_occ, pred_pot_arith = pred_pot_arith, pred_pot_larith = pred_pot_larith))
-}
 
 
 

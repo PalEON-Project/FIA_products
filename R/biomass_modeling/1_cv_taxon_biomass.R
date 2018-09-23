@@ -1,27 +1,32 @@
-## Fit statistical model to smooth the raw plot biomass.
+## Fit statistical model to smooth the raw plot biomass via cross-validation
+## to determine best upper-bound on amount of spatial smoothing.
+
 ## The model fits in two parts - first the proportion of points occupied by trees
 ## (this is much more important for the taxon-level fitting)
 ## then the average biomass for occupied points (called potential biomass).
 ## Estimated biomass is the product of occupancy and potential.
 
-l3a_to_l3s <- read_csv(file.path(conversions_data_dir, level3a_to_level3s_file)) 
-taxa_to_fit <- unique(l3a_to_l3s$level3s)
-taxa_to_fit <- taxa_to_fit[!taxa_to_fit %in% excluded_level3s_OH]
-print(taxa_to_fit)
+## This is very computationally-intensive and best done on a cluster.
+
+load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
 if(use_mpi) {
     library(doMPI)
     cl <- startMPIcluster()
     registerDoMPI(cl)
 } else {
+    library(doParallel)
     if(n_cores == 0) {
         if(Sys.getenv("SLURM_JOB_ID") != "") {
             n_cores <- Sys.getenv("SLURM_CPUS_PER_TASK")
         } else n_cores <- detectCores()
     }
-    library(doParallel)
     registerDoParallel(cores = n_cores)
 }
+
+taxa_to_fit <- unique(fia$level3s)
+taxa_to_fit <- taxa_to_fit[!is.na(taxa_to_fit)]  ## 22 Douglas fir trees in dataset. Not fit.
+print(taxa_to_fit)
 
 ## for naming consistency with PLS, will refer to FIA plots as 'points'
 
@@ -33,18 +38,21 @@ plots_per_cell <- fia %>% group_by(PLT_CN, x, y, cell) %>%
     summarize(n_trees = n()) %>% 
     group_by(cell) %>% summarize(points_total = n()) 
 
-## currently grouping taxa by level3s but this is likely to change
+## Total biomass per taxon per plot only for taxa represented in a plot.
+## Currently grouping taxa by level3s but this could change.
 biomass_taxon_plot <- fia %>% group_by(PLT_CN, level3s, cell, x, y) %>%
     summarize(total_biomass = sum(biomass) * area_conversion)
 ## after conversion, biomass is Mg/Ha
 
-## here the count will be less than the number of FIA plots per cell
-## when a taxon is missing from a plot
+## Average biomass per taxon per cell only for taxa represented in a cell,
+## and only for plots in which taxon is present, so that potential biomass
+## modeling ignores occupancy.
 biomass_taxon_cell <- biomass_taxon_plot %>% group_by(cell, x, y, level3s) %>%
     summarize(avg = mean(total_biomass),
               geom_avg = mean(log(total_biomass)), points_occ = n()) 
 
-## flesh out data so have 0s for taxa missing in each cell (needed for occupancy part of model)
+## Flesh out data so have 0s for taxa missing in each cell
+## (needed for occupancy part of model)
 tmp <- fia %>% dplyr::select(cell, x, y) %>% unique()
 expanded <- expand.grid(level3s = sort(unique(fia$level3s)),
                         cell = tmp$cell, 
@@ -57,12 +65,18 @@ cell_full <- expanded %>%
            avg = ifelse(is.na(avg), 0, avg),
            geom_avg = ifelse(is.na(geom_avg), 0, geom_avg))
 
+assert_that(nrow(cell_full) == nrow(plots_per_cell) * length(taxa_to_fit),
+            msg = "Dataset does not have data for all taxa for all occupied cells.")
+
+## Set up cross-validation folds.
 set.seed(1)
 cells <- sample(unique(cell_full$cell), replace = FALSE)
 folds <- rep(1:n_folds, length.out = length(cells))
 
 cell_full <- cell_full %>% inner_join(data.frame(cell = cells, fold = folds), by = c('cell'))
 
+## Fit statistical model to each taxon and fold.
+## Nested foreach will run separate tasks for each combination of taxon and fold.
 output <- foreach(taxonIdx = seq_along(taxa_to_fit)) %:%
     foreach(i = seq_len(n_folds)) %dopar% {
 
@@ -78,6 +92,8 @@ output <- foreach(taxonIdx = seq_along(taxa_to_fit)) %:%
         cat("taxon: ", taxonIdx, " ; fold: ", i, "\n", sep = "")
         list(po$pred_occ, ppa$pred_pot, ppl$pred_pot)
     }
+
+## Gather results together
 
 pred_occ <- array(0, c(length(taxa_to_fit), nrow(plots_per_cell), length(k_occ_cv)))
 pred_pot_arith <- pred_pot_larith <- array(0, c(length(taxa_to_fit), nrow(plots_per_cell), length(k_pot_cv)))
@@ -95,6 +111,9 @@ for(taxonIdx in seq_along(taxa_to_fit))
         pred_pot_larith[taxonIdx, sub$fold == i, ] <- output[[taxonIdx]][[i]][[3]]
     }
 
+
+## Assess results
+
 critArith <- critLogArith <- array(0, c(length(taxa_to_fit), length(k_occ_cv), length(k_pot_cv)))
 dimnames(critArith)[[1]] <- dimnames(critLogArith)[[1]] <- taxa_to_fit
 dimnames(critArith)[[2]] <- dimnames(critLogArith)[[2]] <- k_occ_cv
@@ -105,7 +124,7 @@ for(taxonIdx in seq_along(taxa_to_fit)) {
     taxon <- taxa_to_fit[taxonIdx]
     sub <- cell_full %>% filter(level3s == taxon)
         
-    y <- sub$avg*sub$points_occ/sub$points_total  ## actual average biomass over all cells
+    y <- sub$avg*sub$points_occ/sub$points_total  ## actual average biomass over all plots (occupied or not) in a cell
 
     critArith[taxonIdx, , ] <- calc_cv_criterion(pred_occ[taxonIdx, , ], pred_pot_arith[taxonIdx, , ],
                                                  sub$points_total, y, cv_max_biomass)
@@ -113,8 +132,6 @@ for(taxonIdx in seq_along(taxa_to_fit)) {
                                                     sub$points_total, y, cv_max_biomass)
 }
 
-
 save(critArith, critLogArith, pred_occ, pred_pot_arith, pred_pot_larith, file = file.path(interim_results_dir, 'cv_taxon_biomass.Rda'))
-
 
 if(use_mpi) closeCluster(cl)

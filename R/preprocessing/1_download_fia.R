@@ -25,8 +25,9 @@ for(state in states){
    }
 }
 
+## Save info on files into VERSIONS file in data directory.
+## file.info(list.files()) not working so this code is not cross-platform
 if(.Platform$OS.type == "unix") {
-    ## file.info(list.files()) not working so not cross-platform
     info <- system(paste0("ls -l ", raw_data_dir, "/"), intern=TRUE)
     assert_that(length(grep("\\.csv", info)) == length(states)*3,
               msg = "incorrect number of files downloaded")

@@ -1,51 +1,71 @@
 ## Full workflow for FIA analyses
 ## Chris Paciorek
 ## 2018-02-01
+## Analyses done using R 3.4.3
+## as shown below, uses various R packages from 2018-09-20
 
-## note required input files (download from PalEON Wiki)
+
+## Various required input files (download from PalEON Wiki)
 
 # 7z -e NRS_actual_coords_forested_plots.zip
 # unzip NRS_actual_coords_forested_plots_2nd_run.zip
 # unzip NRS_actual_coords_forested_plots_3rd_run.zip
 
+## Taxon conversion files
+
+## Based on discussions with Charlie Cogbill, Mike Dietze:
+## Convert FIA taxa to PEcAn allometry taxa: fia_to_pecan_v0.4.csv
+##
+## Convert FIA taxa to PalEON level3a:
+## fia_to_level3a_v0.5.csv
+## 
+## Convert PalEON level3a to PalEON level3s:
+## level3a_to_level3s_v0.4.csv
+##
+## level3s is the aggregation for most of our analyses,
+## though we do exclude some uncommon taxa.
+
+
 library(assertthat)
 library(devtools)
 
 ## get configuration variables
-
 source('config')
 
-## Note that analyses done in 2018 done in R 3.4.3
-R_version <- "3.4.3"
 
 ## setup R packages (with version control) 
-if(FALSE) {  
+if(use_original_R_package_versions) {  
     ## bug in checkpoint: errors out with 'arguments imply differing number of rows':
     ## work-around is to avoid wget as download method
     if(options('download.file.method') == 'wget')
         options('download.file.method' = NULL)
+    ## Note that analyses done in 2018 done in R 3.4.3
+    R_version <- "3.4.3"
     checkpoint::checkpoint("2018-09-20", R.version = R_version)  
     install_github("PecanProject/pecan",subdir="base/logger", ref = pecan_base_logger_commit)
     install_github("PecanProject/pecan",subdir="modules/allometry", ref = pecan_modules_allometry_commit)
 }
 
 
-## setup directories and basic data
+## geographic subsetting
 
 states = c('MN', 'WI', 'MI', 'IL', 'IN', 'OH', 'PA', 'NY', 'NJ', 'ME', 'VT', 'MA', 'CT', 'NH', 'RI')
 
+## PalEON-defined regions: some PalEON input files are stratified
+## by our own regions that cross state boundaries
 paleon_regions_west <- c(2,3,5,6,11,12) ## MI/IN and west
 paleon_regions_west_ohio <- c(2,3,5,6,9,11,12) ## OH and west
 paleon_regions_east <- c(1,4,7,8,9,10)
 paleon_regions <- 1:12
 
+## State FIPS codes:
 paleon_states_west <- c(17, 18, 26, 27, 55) 
 paleon_states_west_ohio <- c(paleon_states_west, 39)
 paleon_states_east <- c(9, 23, 25, 33, 34, 36, 39, 42, 44, 50)  # includes Ohio (39)
 
 
-## setup directories relative to current working directory
-
+## setup directories relative to current working directory,
+## if directories not set in config file
 if(raw_data_dir == "")
     raw_data_dir <- file.path("..", "data", "raw") 
 if(conversions_data_dir == "")
@@ -59,7 +79,7 @@ if(output_dir == "")
 if(interim_results_dir == "")
     interim_results_dir <- file.path("..", "data", "interim")
 
-## source files with R functions
+## source all files with R functions
 code_files <- list.files(code_dir, pattern = ".R$", full.names = TRUE)
 sapply(code_files, source)
 
@@ -73,23 +93,27 @@ k_occ_cv <- c(100,250,500,1000,1500,2000,2500,3000,3500)
 k_pot_cv = c(100,250,500,1000,1500,2000,2500,3000,3500)
 
 
-## the following documents the workflow to do the analyses
-## but would not generally be run all at once, so embedded in conditional statements
+## The following documents the workflow to do the analyses
+## but would not generally be run all at once,
+## so embedded in conditional statements.
 
 ## for data download and processing:
 if(FALSE) {
     source(file.path("preprocessing", "1_download_fia.R"))
     source(file.path("preprocessing", "2_process_for_paleon.R"))
+    ## next step not needed for composition analysis
+    ## but 4_setup_grid.R assumes use of output from 3_estimate_tree_biomass.R
     source(file.path("preprocessing", "3_estimate_tree_biomass.R"))
     source(file.path("preprocessing", "4_setup_grid.R"))
 }
 
 ## for biomass modeling
 if(FALSE) {
-    ## to determine optimal k_occ, k_pot, run these two lines
+    ## to determine optimal k_occ, k_pot, run these two lines:
     source(file.path("biomass_modeling", "1_cv_total_biomass.R"))
     source(file.path("biomass_modeling", "1_cv_taxon_biomass.R"))
     ## based on results, set k_occ_taxon, k_pot_taxon, k_pot_total in 'config'
+    ## then run:
     source(file.path("biomass_modeling", "2_fit_total_biomass.R"))
     source(file.path("biomass_modeling", "2_fit_taxon_biomass.R"))
     source(file.path("biomass_modeling", "3_output_biomass.R"))
@@ -98,9 +122,13 @@ if(FALSE) {
 ## for composition modeling
 if(FALSE) {
     source(file.path("composition_modeling", "1_setup_composition.R"))
+    ## run next line twice, changing 'composition_region' in config
+    ## to be 'eastern' and 'western'
+    ## because fitting takes 6-7 days for 150k MCMC iterations
     source(file.path("composition_modeling", "2_fit_composition.R"))
-    source(file.path("composition_modeling", "3_output_composition.R"))
+    source(file.path("composition_modeling", "3_draw_proportions.R"))
+    source(file.path("composition_modeling", "4_output_composition.R"))
 }
 
-## TMP: for seeing all cols instead of tibble
+## temporary: convert tibble to regular data frame for easier viewing in R
 adf <- as.data.frame

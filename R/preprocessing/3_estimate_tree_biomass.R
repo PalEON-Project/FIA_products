@@ -1,6 +1,7 @@
 ## Estimate tree-level biomass using diameter of trees and PEcAn allometries
 
-## Run-time: approximately 3 hours
+## Run-time: This takes 3.5 hours for 10 samples each on modern desktop on one core.
+## Most computational time is spent in predicting biomass for the individual FIA trees.
 
 library(dplyr)
 library(readr)
@@ -8,6 +9,9 @@ library(PEcAn.allometry)
 library(PEcAn.logger)
 
 load(file.path(interim_results_dir, 'full_trees.Rda'))
+
+## Read in conversion info to go from FIA taxa to PalEON-determined aggregations of taxa
+## for which we can estimate statistically stable allometric relationships.
 
 cols_conv <- cols(
   fia_spcd = col_integer(),
@@ -35,15 +39,16 @@ fia <- fia %>% left_join(taxa_conversion, by = c("SPCD" = "fia_spcd"))
 assert_that(sum(is.na(fia$pecan_allometry_spcd)) == 0, msg = "missing allometries")
 
 ## Fit allometry models for all taxa
+
 unique_pecan_allom <- unique(fia$pecan_allometry_spcd)
 pecan_taxa <- lapply(seq_len(length(unique_pecan_allom)), function(i) 
     data.frame(spcd = as.numeric(strsplit(unique_pecan_allom[i], split = ',')[[1]])))
 names(pecan_taxa) <- unique_pecan_allom
 
-## first check which allometries are already in the allom_dir and don't redo
+## First check which allometries are already in the allom_dir and don't redo
 allom_stats = load.allom(allom_dir)
 
-## create via loop rather than passing list of dataframes because of PEcAn bug
+## Fit allometry, creating via loop rather than passing list of dataframes because of PEcAn bug
 for(i in seq_along(pecan_taxa)) {
     if(!names(pecan_taxa)[i] %in% names(allom_stats)) {
         cat("Fitting ", names(pecan_taxa)[i], ".\n")
@@ -52,23 +57,24 @@ for(i in seq_along(pecan_taxa)) {
                              outdir = allom_dir, dmin = 10, dmax = 150))
 }}
 
-
+## Setup storage.
 n_trees <- nrow(fia)
-
 tmp_plt <- rep("", n_trees)
 tmp_subplt <- rep(0, n_trees)
 tmp_tree <- rep(0, n_trees)
 biomass <- matrix(0, nrow = n_trees, ncol = n_allom_samples)
 
-counter <- 1
-## We want to run the allometry prediction for all trees of a given taxon in a given plot simultaneously because this allows for shared allometric parameters (but different tree effects) for trees of the same taxon. In this case we simply run the prediction for all trees in a plot at once.
+
+## We want to run the allometry prediction for all trees of a given taxon in a given plot simultaneously
+## because this allows for shared allometric parameters (but different tree effects) for trees of the
+## same taxon. In this case we simply run the prediction for all trees in a plot at once.
 ## TREE is unique only within subplot.
-## This takes 3.5 hours for 10 samples each on modern desktop on one core.
 set.seed(1)
+counter <- 1
 for(plt in unique(fia$PLT_CN)) {
     sub <- fia %>% filter(PLT_CN == plt) %>% dplyr::select(PLT_CN, SUBP, TREE, DIA_CM, pecan_allometry_spcd)
-    ## site effects seem to product crazy allometries - mu0 and mu1 have outliers and taus can be big,
-    ## so have 'use' be 'Bg'
+    ## Inclusion of site effects seem to product crazy allometries:
+    ## mu0 and mu1 have outliers and taus can be big, so have 'use' be 'Bg'
     pred <- allom.predict(allom_dir,
                           dbh = sub$DIA_CM,
                           pft = sub$pecan_allometry_spcd,
