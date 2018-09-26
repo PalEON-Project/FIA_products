@@ -71,4 +71,6 @@ pred_grid_west <- pred_grid[regions %in% paleon_regions_west, ]
 pred_grid_west_ohio <- pred_grid[regions %in% paleon_regions_west_ohio, ]
 pred_grid_east <- pred_grid[regions %in% paleon_regions_east, ]
 
-save.image(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
+save(fia, base_raster, pred_grid, pred_grid_paleon, pred_grid_west,
+     pred_grid_west_ohio, pred_grid_east, grid, regions,
+     file = file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))

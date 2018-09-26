@@ -13,6 +13,9 @@ library(ncdf4)
 load(file.path(interim_results_dir, 'fitted_total_biomass.Rda'))
 load(file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
 
+## for grid:
+load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
+
 ## center draws on point estimates so mean of draws equal point estimate
 biomass_total$draws <- biomass_total$draws - rowMeans(biomass_total$draws) +
     as.numeric(biomass_total$pred$mean)
@@ -32,12 +35,14 @@ y_grid <- sort(unique(pred_grid$y))
 x_res <- length(x_grid)
 y_res <- length(y_grid)
 
-make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare', fn = output_netcdf_name,
-                   dir = output_dir, x = x_grid, y = y_grid, taxa = c('total', taxaNames),
+make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare,', units = "Mg / ha",
+                   fn = output_netcdf_name,
+                   dir = output_dir, x = x_grid, y = y_grid, taxa = c('Total', taxaNames),
                    num_samples = n_stat_samples)
 
-make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare', fn = output_netcdf_name_point,
-                   dir = output_dir, x = x_grid, y = y_grid, taxa = c('total', taxaNames),
+make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare,', units = "Mg / ha",
+                   fn = output_netcdf_name_point,
+                   dir = output_dir, x = x_grid, y = y_grid, taxa = c('Total', taxaNames),
                    num_samples = 0)
 
 output_netcdf <- nc_open(file.path(output_dir, output_netcdf_name), write = TRUE)
@@ -59,8 +64,8 @@ for(i in seq_len(nrow(locs))) {
     if(i%%1000 == 0) print(i)
 }
 
-ncvar_put(output_netcdf, 'total', full, start = c(1, 1, 1), count = c(x_res, y_res, n_stat_samples))
-ncvar_put(output_netcdf_point, 'total', full_point, start = c(1, 1), count = c(x_res, y_res))
+ncvar_put(output_netcdf, 'Total', full, start = c(1, 1, 1), count = c(x_res, y_res, n_stat_samples))
+ncvar_put(output_netcdf_point, 'Total', full_point, start = c(1, 1), count = c(x_res, y_res))
 
 ## add taxon biomass to netCDF
 

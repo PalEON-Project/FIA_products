@@ -6,6 +6,7 @@
 product_version=0.999
 
 use_original_R_package_versions=1
+reinstall_pecan=0
 
 ## directory locations: these default to ../data/{points,conversions,allom}, code, and ../output in master.R
 raw_data_dir=""
@@ -97,17 +98,25 @@ runID=0
 
 nbhdStructure="bin"  # bin, lindgren_nu1, tps
 
-runName='first150k' # 'first150k'
+blend_point=147  # id of x direction grid number where blending of east and west occurs (this is at x=1101000 - midway from OH-PA border to x value where OH-MI touch)
+blend_buffer=10  # number of cells on either side to blend
+blend_below=112  # id of y direction grid number below which do blending (this avoids blending any of Michigan
 
 ## MCMC sampling
 composition_region="western"
-S=150000     ## final analyses used concatentation of two 150k-long runs
-burnin=25000
+S=300000     # final analyses used concatentation of two 150k-long runs
+burnin=50000  # final analysis used first 100 of 600 thinned as burnin
 thin=500  # thinning applies to all S not just S-burnin
+secondThin=2  # to go from 500 total down to 250 for smaller output
 resumeRun=FALSE   # if a run is interrupted; may not work if in middle of second run
 secondRun=TRUE    # see above about two runs
 numCoresForProps=8 # number of cores to use for drawing final proportions (no parallelization used in MCMC)
 numSamplesForProps=10000
+
+## if combining two MCMC runs/output files
+## otherwise set to ''
+first_run_name='first150k'
+second_run_name='second150k'
 
 buffer=0
 seed=1

@@ -1,6 +1,6 @@
 ## Fit primary MCMC for a given region. Then draw composition proportions.
 
-## Run-time: 
+## Run-time: 6:40 minutes per 10000 samples for each draw, so 4 hrs on 8 cores for 300 draws
 
 library(ncdf4)
 

@@ -1,3 +1,11 @@
+9/25/18:
+ESS of proportions all seem around 600 - some don't look entirely great, but it seems that ACF shows little correlation.
+
+9/24/18:
+mixing of tau2 for eastern seems pretty good except a couple uncommon taxa; only have second150k for western, but seems similar in nature
+
+should use first 100 as burnin as 50-100 (and even beyond for less common taxa) still shows some nonstationary behavior
+
 9/20/18:
 notes from aggregating taxa to get enough data for allometry fitting (done in spring 2018):
 

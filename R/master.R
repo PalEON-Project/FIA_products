@@ -41,9 +41,11 @@ if(use_original_R_package_versions) {
         options('download.file.method' = NULL)
     ## Note that analyses done in 2018 done in R 3.4.3
     R_version <- "3.4.3"
-    checkpoint::checkpoint("2018-09-20", R.version = R_version)  
-    install_github("PecanProject/pecan",subdir="base/logger", ref = pecan_base_logger_commit)
-    install_github("PecanProject/pecan",subdir="modules/allometry", ref = pecan_modules_allometry_commit)
+    checkpoint::checkpoint("2018-09-20", R.version = R_version)
+    if(reinstall_pecan) {
+        install_github("PecanProject/pecan",subdir="base/logger", ref = pecan_base_logger_commit)
+        install_github("PecanProject/pecan",subdir="modules/allometry", ref = pecan_modules_allometry_commit)
+    }
 }
 
 
@@ -96,6 +98,8 @@ k_pot_cv = c(100,250,500,1000,1500,2000,2500,3000,3500)
 ## The following documents the workflow to do the analyses
 ## but would not generally be run all at once,
 ## so embedded in conditional statements.
+
+## One needs to source master.R before running any of these.
 
 ## for data download and processing:
 if(FALSE) {
