@@ -38,7 +38,7 @@ assert_that(nrow(cell_full) == nrow(plots_per_cell),
 ## fit stats model, using potential biomass part of model only.
 biomass_total <- fit(cell_full, newdata = pred_grid_paleon, k_occ = NULL,
                      k_pot = k_pot_total, return_model = TRUE, unc = TRUE,
-                     type_pot = 'arith', num_draws = n_stat_samples, save_draws = TRUE,
+                     type_pot = fit_scale, num_draws = n_stat_samples, save_draws = TRUE,
                      use_bam = TRUE)
 
 save(biomass_total, file = file.path(interim_results_dir, 'fitted_total_biomass.Rda'))

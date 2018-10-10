@@ -74,7 +74,7 @@ biomass_taxon <- foreach(taxonIdx = seq_along(taxa_to_fit)) %dopar% {
     sub <- cell_full %>% filter(level3s == taxon)
     ## try() allows fitting to fail for a taxon without stopping fitting for other taxa
     try(fit(sub, newdata = pred_grid_paleon, k_occ = k_occ_taxon, k_pot = k_pot_taxon,
-            return_model = TRUE, unc = TRUE, type_pot = 'arith', num_draws = n_stat_samples,
+            return_model = TRUE, unc = TRUE, type_pot = fit_scale, num_draws = n_stat_samples,
             save_draws = TRUE, use_bam = TRUE))
 }
 
