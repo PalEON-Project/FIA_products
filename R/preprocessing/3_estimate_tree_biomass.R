@@ -54,7 +54,7 @@ for(i in seq_along(pecan_taxa)) {
         cat("Fitting ", names(pecan_taxa)[i], ".\n")
         allom_stats[[names(pecan_taxa)[i]]] <- try(AllomAve(pecan_taxa[i], ngibbs=1000,
                                                             components = allom_component,
-                             outdir = allom_dir, dmin = 10, dmax = 150))
+                             outdir = allom_dir, dmin = dmin_allom_fit, dmax = dmax_allom_fit))
 }}
 
 ## Setup storage.

@@ -67,6 +67,9 @@ n_allom_samples=25
 ## whole tree (above stump) component 3 don't have enough data
 allom_component=6      
 do_allom_uncertainty=0  # for now, don't include allometric uncertainty
+## min and max diameters for trees used in fitting allometry models
+dmin_allom_fit=10
+dmax_allom_fit=150
 
 ## cross-validation folds for biomass/density
 n_folds=10
