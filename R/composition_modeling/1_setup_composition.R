@@ -5,6 +5,8 @@
 library(dplyr)
 library(tidyr)
 
+load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
+
 ## Count trees in each cell by taxon.
 ## note all NAs in level3s are Douglas fir; omitting these
 counts <- fia %>%
