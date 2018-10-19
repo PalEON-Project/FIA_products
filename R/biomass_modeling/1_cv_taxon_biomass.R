@@ -8,6 +8,8 @@
 
 ## This is very computationally-intensive and best done on a cluster.
 
+library(dplyr)
+
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
 if(use_mpi) {

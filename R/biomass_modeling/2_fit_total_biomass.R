@@ -4,6 +4,8 @@
 ## Estimated biomass is the product of occupancy and potential.
 ## For total biomass, all FIA analysis done on forested plots, so occupancy is always 1.
 
+library(dplyr)
+
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
 if(!exists('k_pot_total'))

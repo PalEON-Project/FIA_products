@@ -6,6 +6,8 @@
 ## Estimated biomass is the product of occupancy and potential.
 ## For total biomass, all FIA analysis done on forested plots, so occupancy is always 1.
 
+library(dplyr)
+
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
 library(doParallel)
@@ -79,5 +81,5 @@ critLogArith <- calc_cv_criterion(pred_occ, pred_pot_larith, cell_full$points_oc
                                   y, cv_max_biomass)
 colnames(critArith) <- colnames(critLogArith) <- k_pot_cv
 
-save(critArith, critLogArith, results, file = file.path(interim_results_dir, 'cv_total_biomass.Rda'))
+save(critArith, critLogArith, pred_pot_arith, pred_pot_larith, file = file.path(interim_results_dir, 'cv_total_biomass.Rda'))
 
