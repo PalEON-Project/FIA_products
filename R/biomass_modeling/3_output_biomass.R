@@ -35,12 +35,12 @@ y_grid <- sort(unique(pred_grid$y))
 x_res <- length(x_grid)
 y_res <- length(y_grid)
 
-make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare,', units = "Mg / ha",
+make_albers_netcdf(name = 'biomass', longname = 'biomass, megagrams per hectare,', units = "Mg/ha",
                    fn = output_netcdf_name,
                    dir = output_dir, x = x_grid, y = y_grid, taxa = c('Total', taxaNames),
                    num_samples = n_stat_samples)
 
-make_albers_netcdf(name = 'biomass', longname = 'biomass, Mg per hectare,', units = "Mg / ha",
+make_albers_netcdf(name = 'biomass', longname = 'biomass, megagrams per hectare,', units = "Mg/ha",
                    fn = output_netcdf_name_point,
                    dir = output_dir, x = x_grid, y = y_grid, taxa = c('Total', taxaNames),
                    num_samples = 0)
