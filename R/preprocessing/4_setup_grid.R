@@ -6,7 +6,7 @@ library(readr)
 library(ncdf4)
 library(tidyr)
 
-## if doing only composition analysis, this could be changed to
+## if doing only composition or density analysis, this could be changed to
 ## use full_trees.Rda
 load(file.path(interim_results_dir, 'full_trees_with_biomass.Rda'))
 
