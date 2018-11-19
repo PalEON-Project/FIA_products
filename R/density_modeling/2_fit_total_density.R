@@ -6,10 +6,10 @@
 
 library(dplyr)
 
-load(file.path(interim_results_dir, 'full_trees_with_density_grid.Rda'))
+load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
-if(!exists('k_pot_total'))
-    stop("Must specify 'k_pot_total'")
+if(!exists('k_pot_total_density'))
+    stop("Must specify 'k_pot_total_density'")
 
 ## for naming consistency with PLS, will refer to FIA plots as 'points'
 
@@ -39,8 +39,8 @@ assert_that(nrow(cell_full) == nrow(plots_per_cell),
 
 ## fit stats model, using potential density part of model only.
 density_total <- fit(cell_full, newdata = pred_grid_paleon, k_occ = NULL,
-                     k_pot = k_pot_total, return_model = TRUE, unc = TRUE,
-                     type_pot = fit_scale, num_draws = n_stat_samples, save_draws = TRUE,
+                     k_pot = k_pot_total_density, return_model = TRUE, unc = TRUE,
+                     type_pot = fit_scale_density, num_draws = n_stat_samples, save_draws = TRUE,
                      use_bam = TRUE)
 
 save(density_total, file = file.path(interim_results_dir, 'fitted_total_density.Rda'))

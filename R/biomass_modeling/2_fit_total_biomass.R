@@ -8,8 +8,8 @@ library(dplyr)
 
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
-if(!exists('k_pot_total'))
-    stop("Must specify 'k_pot_total'")
+if(!exists('k_pot_total_biomass'))
+    stop("Must specify 'k_pot_total_biomass'")
 
 ## for naming consistency with PLS, will refer to FIA plots as 'points'
 
@@ -39,8 +39,8 @@ assert_that(nrow(cell_full) == nrow(plots_per_cell),
 
 ## fit stats model, using potential biomass part of model only.
 biomass_total <- fit(cell_full, newdata = pred_grid_paleon, k_occ = NULL,
-                     k_pot = k_pot_total, return_model = TRUE, unc = TRUE,
-                     type_pot = fit_scale, num_draws = n_stat_samples, save_draws = TRUE,
+                     k_pot = k_pot_total_biomass, return_model = TRUE, unc = TRUE,
+                     type_pot = fit_scale_biomass, num_draws = n_stat_samples, save_draws = TRUE,
                      use_bam = TRUE)
 
 save(biomass_total, file = file.path(interim_results_dir, 'fitted_total_biomass.Rda'))

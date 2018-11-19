@@ -17,11 +17,13 @@ load(file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
 ## center draws on point estimates so mean of draws equal point estimate
-biomass_total$draws <- biomass_total$draws - rowMeans(biomass_total$draws) +
-    as.numeric(biomass_total$pred$mean)
-for(k in seq_along(biomass_taxon))
-    biomass_taxon[[k]]$draws <- biomass_taxon[[k]]$draws - rowMeans(biomass_taxon[[k]]$draws) +
-    as.numeric(biomass_taxon[[k]]$pred$mean)
+if(FALSE) {  # this can cause negative biomasses...
+    biomass_total$draws <- biomass_total$draws - rowMeans(biomass_total$draws) +
+        as.numeric(biomass_total$pred$mean)
+    for(k in seq_along(biomass_taxon))
+        biomass_taxon[[k]]$draws <- biomass_taxon[[k]]$draws - rowMeans(biomass_taxon[[k]]$draws) +
+            as.numeric(biomass_taxon[[k]]$pred$mean)
+}
 
 taxa <- names(biomass_taxon)
 taxaNames <- gsub("/", ",", taxa)  ## netCDF interprets / as 'groups'

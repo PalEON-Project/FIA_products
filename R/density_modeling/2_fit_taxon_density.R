@@ -8,12 +8,12 @@
 
 library(dplyr)
 
-load(file.path(interim_results_dir, 'full_trees_with_density_grid.Rda'))
+load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
-if(!exists('k_occ_taxon'))
-    stop("Must specify 'k_occ_taxon'")
-if(!exists('k_pot_taxon'))
-    stop("Must specify 'k_pot_taxon'")
+if(!exists('k_occ_taxon_density'))
+    stop("Must specify 'k_occ_taxon_density'")
+if(!exists('k_pot_taxon_density'))
+    stop("Must specify 'k_pot_taxon_density'")
 
 taxa_to_fit <- unique(fia$level3s)
 taxa_to_fit <- taxa_to_fit[!is.na(taxa_to_fit)]  ## 22 Douglas fir trees in dataset. Not fit.
@@ -75,8 +75,8 @@ density_taxon <- foreach(taxonIdx = seq_along(taxa_to_fit)) %dopar% {
     taxon <- taxa_to_fit[taxonIdx]
     sub <- cell_full %>% filter(level3s == taxon)
     ## try() allows fitting to fail for a taxon without stopping fitting for other taxa
-    try(fit(sub, newdata = pred_grid_paleon, k_occ = k_occ_taxon, k_pot = k_pot_taxon,
-            return_model = TRUE, unc = TRUE, type_pot = fit_scale, num_draws = n_stat_samples,
+    try(fit(sub, newdata = pred_grid_paleon, k_occ = k_occ_taxon_density, k_pot = k_pot_taxon_density,
+            return_model = TRUE, unc = TRUE, type_pot = fit_scale_density, num_draws = n_stat_samples,
             save_draws = TRUE, use_bam = TRUE))
 }
 

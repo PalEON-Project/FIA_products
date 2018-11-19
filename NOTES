@@ -1,3 +1,36 @@
+11/16/18:
+cv for taxon density for k_pot=2500 and k_pot=3500 are basically teh same.
+arith better than larith
+
+didn't look at k_occ > 2500
+
+11/10/18:
+cv for total density is a slight bit better for 3500=k than k=2500, but using k=2500
+arith better than log_arith
+
+both arith and larith fits seem to show cv residuals (fit - observation) that are somewhat homoscedastic - increase some with increasing fitted value
+
+> df %>% group_by(group) %>% summarize(mad_res = mad(res))
+# A tibble: 9 x 2
+  group     mad_res
+  <fct>       <dbl>
+1 (10,20]      14.6
+2 (20,40]      19.0
+3 (40,60]      25.6
+4 (60,80]      34.8
+5 (80,100]     41.5
+6 (100,120]    49.1
+7 (120,150]    49.0
+8 (150,200]    30.6
+
+biomass pred sd goes from about 5 for biomass of 40 to around 10 for biomass of 120 for arith fit
+
+biomass pred sd does increase rather linearly with pred for larith fit while arith fit is much flatter
+larith sd gets to about 15 for biomass of 110
+arith sd gets to about 10-12 for biomass of 110
+
+arith fits are systematically lower than log arith fits
+
 9/25/18:
 ESS of proportions all seem around 600 - some don't look entirely great, but it seems that ACF shows little correlation.
 

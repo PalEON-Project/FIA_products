@@ -14,14 +14,16 @@ load(file.path(interim_results_dir, 'fitted_total_density.Rda'))
 load(file.path(interim_results_dir, 'fitted_taxon_density.Rda'))
 
 ## for grid:
-load(file.path(interim_results_dir, 'full_trees_with_density_grid.Rda'))
+load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 
 ## center draws on point estimates so mean of draws equal point estimate
-density_total$draws <- density_total$draws - rowMeans(density_total$draws) +
-    as.numeric(density_total$pred$mean)
-for(k in seq_along(density_taxon))
-    density_taxon[[k]]$draws <- density_taxon[[k]]$draws - rowMeans(density_taxon[[k]]$draws) +
+if(FALSE) {  # this can cause negative density...
+    density_total$draws <- density_total$draws - rowMeans(density_total$draws) +
+        as.numeric(density_total$pred$mean)
+    for(k in seq_along(density_taxon))
+        density_taxon[[k]]$draws <- density_taxon[[k]]$draws - rowMeans(density_taxon[[k]]$draws) +
     as.numeric(density_taxon[[k]]$pred$mean)
+}
 
 taxa <- names(density_taxon)
 taxaNames <- gsub("/", ",", taxa)  ## netCDF interprets / as 'groups'
