@@ -3,6 +3,7 @@
 
 library(dplyr)
 library(readr)
+library(assertthat)
 
 ## see here for FIA metadata
 ## https://www.fia.fs.fed.us/library/database-documentation/index.php

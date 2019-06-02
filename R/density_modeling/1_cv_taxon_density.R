@@ -128,9 +128,9 @@ for(taxonIdx in seq_along(taxa_to_fit)) {
         
     y <- sub$avg*sub$points_occ/sub$points_total  ## actual average density over all plots (occupied or not) in a cell
 
-    critArith[taxonIdx, , ] <- calc_cv_criterion(pred_occ[taxonIdx, , ], pred_pot_arith[taxonIdx, , ],
+    critArith[taxonIdx, , ] <- calc_point_criterion(pred_occ[taxonIdx, , ], pred_pot_arith[taxonIdx, , ],
                                                  sub$points_total, y, cv_max_density)
-    critLogArith[taxonIdx, , ] <- calc_cv_criterion(pred_occ[taxonIdx, , ], pred_pot_larith[taxonIdx, , ],
+    critLogArith[taxonIdx, , ] <- calc_point_criterion(pred_occ[taxonIdx, , ], pred_pot_larith[taxonIdx, , ],
                                                     sub$points_total, y, cv_max_density)
 }
 

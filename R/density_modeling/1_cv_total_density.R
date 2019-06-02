@@ -75,9 +75,9 @@ for(i in seq_len(n_folds)) {
 
 y <- cell_full$avg
 ## weight by points_occ as same as points_total
-critArith <- calc_cv_criterion(pred_occ, pred_pot_arith, cell_full$points_occ,
+critArith <- calc_point_criterion(pred_occ, pred_pot_arith, cell_full$points_occ,
                                y, cv_max_density)
-critLogArith <- calc_cv_criterion(pred_occ, pred_pot_larith, cell_full$points_occ,
+critLogArith <- calc_point_criterion(pred_occ, pred_pot_larith, cell_full$points_occ,
                                   y, cv_max_density)
 colnames(critArith) <- colnames(critLogArith) <- k_pot_cv
 

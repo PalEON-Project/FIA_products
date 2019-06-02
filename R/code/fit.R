@@ -32,7 +32,8 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
     newdata[ , c('x','y')] <- newdata[ , c('x','y')] / scaling
     data[ , c('x','y')] <- data[ , c('x','y')] / scaling 
 
-    pred_occ <- pred_occ_se <- pred_pot <- pred <- draws <- model_occ <- model_pot <- NULL
+    pred_occ <- pred_occ_se <- pred_pot <- pred <- draws <- model_occ <- model_pot <-
+        draws_logocc <- draws_logocc_orig <- draws_logpot <- NULL
     
   ###########################
   #  stage 1: fit occupancy #
@@ -48,17 +49,12 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
         for(k_idx in seq_along(k_occ)) {
             model_occ[[k_idx]] <- fitter(z ~ s(x, y, k = k_occ[k_idx]), data = data, family = 'binomial',
                                      gamma = gamma)
-            pred_occ[[k_idx]] <- predict(model_occ[[k_idx]], newdata = newdata, type = 'response', se.fit = se.fit)
-            
-        }
-        if(length(k_occ) == 1) {
-            model_occ <- model_occ[[1]]
-            tmpfit <- pred_occ[[1]]$fit
-            pred_occ_se <- pred_occ[[1]]$se.fit
-            pred_occ <- tmpfit
-        } else {
-            names(model_occ) <- names(pred_occ) <- k_occ
-            pred_occ <- as.matrix(as.data.frame(pred_occ))
+            tmp <- predict(model_occ[[k_idx]], newdata = newdata, type = 'response', se.fit = se.fit)
+
+            if(se.fit) {
+                pred_occ[[k_idx]] <- tmp$fit
+                pred_occ_se[[k_idx]] <- tmp$se.fit
+            } else pred_occ[[k_idx]] <- tmp
         }
     } else pred_occ <- 1
  
@@ -85,13 +81,6 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
                 pred_pot[[k_idx]] <- exp(pred_pot[[k_idx]])
             } else pred_pot[[k_idx]][pred_pot[[k_idx]] < 0] <- 0
         }
-        if(length(k_pot) == 1) {
-            model_pot <- model_pot[[1]]
-            pred_pot <- pred_pot[[1]]
-        } else {
-            names(model_pot) <- names(pred_pot) <- k_pot
-            pred_pot <- as.matrix(as.data.frame(pred_pot))
-        }
     }
     
   #####################
@@ -99,23 +88,32 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
   #####################
 
     if((is.null(k_occ) || length(k_occ) == 1) && length(k_pot) == 1) {
-        pred <- pred_occ * pred_pot
-  
-        if(unc) {  # implement approx. Bayesian posterior draws following Wood (2004) section 4.8
-
-            rmvn <- function(n, mu, sig) { ## MVN random deviates
-                L <- mroot(sig); m <- ncol(L);
-                t(mu + L %*% matrix(rnorm(m*n), m, n)) 
-            }
+        pred <- pred_occ[[1]] * pred_pot[[1]]
+    } else pred <- 0
+    
+    if(unc) {  # implement approx. Bayesian posterior draws following Wood (2004) section 4.8
+        
+        rmvn <- function(n, mu, sig) { ## MVN random deviates
+            L <- mroot(sig); m <- ncol(L);
+            t(mu + L %*% matrix(rnorm(m*n), m, n)) 
+        }
+        
+        ## posterior draws of (log) occupancy
+        if(!is.null(k_occ)) {
+            draws_logocc <- array(0, c(nrow(newdata), length(k_occ), num_draws))
+            nm <- k_occ
+            if(length(k_occ) == 1) nm <- list(nm)
+            dimnames(draws_logocc)[[2]] <- nm
+            if(bound_draws) 
+                draws_logocc_orig <- draws_logocc 
             
-            ## posterior draws of (log) occupancy
-            if(!is.null(k_occ)) {
-                Xp <- predict(model_occ, newdata = newdata, type="lpmatrix")
-                draws_coef <- rmvn(num_draws , coef(model_occ), model_occ$Vp) 
+            for(k_idx in seq_along(k_occ)) {
+                Xp <- predict(model_occ[[k_idx]], newdata = newdata, type="lpmatrix")
+                draws_coef <- rmvn(num_draws , coef(model_occ[[k_idx]]), model_occ[[k_idx]]$Vp) 
                 draws_linpred <- Xp %*% t(draws_coef)
-                draws_logocc <- -log(1 + exp(-draws_linpred)) # log scale to add to log pot result
+                draws_logocc_tmp <- -log(1 + exp(-draws_linpred)) # log scale to add to log pot result
                 if(bound_draws) {
-                    draws_logocc_orig <- draws_logocc
+                    draws_logocc_orig_tmp <- draws_logocc_tmp
                     ## Draws_linpred can have high variance near boundary,
                     ## where value of draws_linpred is very negative (so occ=0)
                     ## individual draws then can have high occ in those areas.
@@ -125,51 +123,96 @@ fit <- function(data, newdata, k_occ = NULL, k_pot = NULL, unc = FALSE, points_t
                     ## 
                     ## Hacky fix that seems reasonable: draws bigger than 5x point estimate of occupancy
                     ## replaced with point prediction. 
-                    log_predocc_plus5 <- log(5) + log(pred_occ)
-                    draws_logocc <- apply(draws_logocc, 2, function(x) {
-                        x[x > log_predocc_plus5] <- log(pred_occ[x > log_predocc_plus5])
+                    log_predocc_plus5 <- log(5) + log(pred_occ[[k_idx]])
+                    draws_logocc_tmp <- apply(draws_logocc_tmp, 2, function(x) {
+                        x[x > log_predocc_plus5] <- log(pred_occ[[k_idx]][x > log_predocc_plus5])
                         return(x)})
                     ## address numerical issue that seems to arise
                     ## (e.g., central MI in total biomass)
                     ## that produces some draws where Pr(occ)=0 but point prediction is 1
-                    draws_logocc[pred_occ > 0.999] <- 0
-                } else draws_logocc_orig <- NULL
-            } else draws_logocc <- draws_logocc_orig <- 0
-            ## best to construct CIs on log scale and exponentiate endpoints
-            
-            ## posterior draws of (log) potential result
-            Xp <- predict(model_pot, newdata = newdata, type="lpmatrix")
-            draws_coef <- rmvn(num_draws , coef(model_pot), model_pot$Vp) 
-            draws_logpot <- Xp %*% t(draws_coef)
-            if(type_pot == 'arith') {
-                draws_logpot[draws_logpot < 0] <- 0.01 # make sure no negative biomass values
-                draws_logpot <- log(draws_logpot)
+                    draws_logocc_tmp[pred_occ[[k_idx]] > 0.999] <- 0
+                }
+                draws_logocc[ , k_idx, ] <- draws_logocc_tmp
+                if(bound_draws)
+                    draws_logocc_orig[ , k_idx, ] <-  draws_logocc_orig_tmp
             }
-            
-            draws <- exp(draws_logocc + draws_logpot)
-
+        }
+        ## best to construct CIs on log scale and exponentiate endpoints
+        
+        ## posterior draws of (log) potential result
+        if(!is.null(k_pot)) {
+            draws_logpot <- array(0, c(nrow(newdata), length(k_pot), num_draws))
+            nm <- k_pot
+            if(length(k_pot) == 1) nm <- list(nm)
+            dimnames(draws_logpot)[[2]] <- nm
+            for(k_idx in seq_along(k_pot)) {
+                Xp <- predict(model_pot[[k_idx]], newdata = newdata, type="lpmatrix")
+                draws_coef <- rmvn(num_draws , coef(model_pot[[k_idx]]), model_pot[[k_idx]]$Vp) 
+                draws_logpot_tmp <- Xp %*% t(draws_coef)
+                if(type_pot == 'arith') {
+                    draws_logpot_tmp[draws_logpot_tmp < 0] <- 0.01 # make sure no negative biomass values
+                    draws_logpot_tmp <- log(draws_logpot_tmp)
+                }
+                draws_logpot[ , k_idx, ] <- draws_logpot_tmp
+            }
+        }
+        
+        if((is.null(k_occ) || length(k_occ) == 1) && length(k_pot) == 1) {
+            if(is.null(k_occ)) {
+                draws <- exp(draws_logpot[ , 1, ])
+            } else draws <- exp(draws_logocc[ , 1, ] + draws_logpot[ , 1, ])
             pp.sd <- apply(draws, 1, sd)
-            if(!save_draws)
-                draws <- NULL
             pred <- data.frame(mean = pred, sd = pp.sd)
+        } 
+        if(!save_draws)
+            draws <- draws_logocc <- draws_logocc_orig <- draws_logpot <- NULL        
+    }
+
+    ## also reduce dim of draws_logocc, draws_logpot
+    if(length(k_occ) == 1) {
+        model_occ <- model_occ[[1]]
+        pred_occ <- pred_occ[[1]]
+        pred_occ_se <- pred_occ_se[[1]]
+        if(unc && save_draws) {
+            draws_logocc <- draws_logocc[ , 1, ]
+            if(bound_draws)
+                draws_logocc_orig <- draws_logocc_orig[ , 1, ]
         }
     } else {
-        if(unc) warning("more than one 'k' value -- not computing uncertainty.")
-        draws_logpot <- draws_logocc <- draws_logocc_orig <- NULL
+        if(length(k_occ) > 1) {
+            names(model_occ) <- names(pred_occ) <- k_occ
+            pred_occ <- as.matrix(as.data.frame(pred_occ))
+            dimnames(pred_occ) <- NULL
+            dimnames(pred_occ)[[2]] <- k_occ
+        }
     }
-    if(!return_model) {
-        model_occ <- NULL
-        model_pot <- NULL
+    if(!return_model) model_occ <- NULL
+    
+    if(length(k_pot) == 1) {
+        model_pot <- model_pot[[1]]
+        if(!return_model) model_pot <- model_pot$sig2
+        pred_pot <- pred_pot[[1]]
+        if(unc && save_draws)
+            draws_logpot <- draws_logpot[ , 1, ]
+    } else {
+        if(length(k_pot) > 1) {
+            if(!return_model)
+                model_pot <- sapply(model_pot, '[[', 'sig2')
+            names(model_pot) <- names(pred_pot) <- k_pot
+            pred_pot <- as.matrix(as.data.frame(pred_pot))
+            dimnames(pred_pot) <- NULL
+            dimnames(pred_pot)[[2]] <- k_pot
+            
+        }
     }
+       
     return(list(locs = data.frame(x = newdata$x*scaling, y = newdata$y*scaling),
-                pred = pred, pred_occ = pred_occ, pred_occ_se = pred_occ_se, pred_pot = pred_pot, draws = draws,
+                pred = pred, pred_occ = pred_occ, pred_occ_se = pred_occ_se,
+                pred_pot = pred_pot, draws = draws,
                 draws_logpot = draws_logpot, draws_logocc = draws_logocc,
                 draws_logocc_orig = draws_logocc_orig,
                 model_occ = model_occ, model_pot = model_pot,
                 k_occ = k_occ, k_pot = k_pot))
 }
-
-
-
 
 

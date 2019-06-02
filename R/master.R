@@ -1,8 +1,8 @@
 ## Full workflow for FIA analyses
 ## Chris Paciorek
-## 2018-02-01
-## Analyses done using R 3.4.3
-## as shown below, uses various R packages from 2018-09-20
+## 2019-06-02 (original 2018-02-01)
+## Analyses done using R 3.5.1
+## as shown below, uses various R packages from 2019-04-13
 
 
 ## Various required input files (download from PalEON Wiki)
@@ -15,19 +15,13 @@
 
 ## Based on discussions with Charlie Cogbill, Mike Dietze:
 ## Convert FIA taxa to PEcAn allometry taxa: fia_to_pecan_v0.4.csv
-##
-## Convert FIA taxa to PalEON level3a:
-## fia_to_level3a_v0.5.csv
-## 
-## Convert PalEON level3a to PalEON level3s:
-## level3a_to_level3s_v0.4.csv
+## when using stem biomass (allometry component 6)
+
+## But as of May/June 2019 we are focusing on the Chojnacky
+## AGB allometry
 ##
 ## level3s is the aggregation for most of our analyses,
 ## though we do exclude some uncommon taxa.
-
-
-library(assertthat)
-library(devtools)
 
 ## get configuration variables
 source('config')
@@ -39,13 +33,9 @@ if(use_original_R_package_versions) {
     ## work-around is to avoid wget as download method
     if(options('download.file.method') == 'wget')
         options('download.file.method' = NULL)
-    ## Note that analyses done in 2018 done in R 3.4.3
-    R_version <- "3.4.3"
-    checkpoint::checkpoint("2018-09-20", R.version = R_version)
-    if(reinstall_pecan) {
-        install_github("PecanProject/pecan",subdir="base/logger", ref = pecan_base_logger_commit)
-        install_github("PecanProject/pecan",subdir="modules/allometry", ref = pecan_modules_allometry_commit)
-    }
+    checkpoint::checkpoint(checkpoint_date, R.version = R_version)
+    devtools::install_github("PecanProject/pecan",subdir="base/logger", ref = pecan_base_logger_commit)
+    devtools::install_github("PecanProject/pecan",subdir="modules/allometry", ref = pecan_modules_allometry_commit)
 }
 
 

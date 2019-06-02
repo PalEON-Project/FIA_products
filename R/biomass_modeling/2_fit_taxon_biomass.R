@@ -7,8 +7,9 @@
 ## Run-time: this takes about 3 hours, if done in parallel across the 21 taxa.
 
 library(dplyr)
+library(assertthat)
 
-load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
+load(file.path(interim_results_dir, paste0('full_trees_with_biomass_grid', ifelse(use_agb, '_agb', ''), '.Rda')))
 
 if(!exists('k_occ_taxon_biomass'))
     stop("Must specify 'k_occ_taxon_biomass'")
@@ -81,7 +82,7 @@ biomass_taxon <- foreach(taxonIdx = seq_along(taxa_to_fit)) %dopar% {
 }
 
 names(biomass_taxon) <- taxa_to_fit
-save(biomass_taxon, file = file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
+save(biomass_taxon, file = file.path(interim_results_dir, paste0('fitted_taxon_biomass', ifelse(use_agb, '_agb', ''), '.Rda')))
     
 
 

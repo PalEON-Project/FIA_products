@@ -1,4 +1,5 @@
 ## Download data from FIA DataMart
+library(assertthat)
 
 for(state in states){
     if (file.exists(file.path(raw_data_dir, paste0(state, "_PLOT.csv"))) &

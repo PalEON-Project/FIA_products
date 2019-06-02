@@ -10,8 +10,10 @@
 
 library(ncdf4)
 
-load(file.path(interim_results_dir, 'fitted_total_biomass.Rda'))
-load(file.path(interim_results_dir, 'fitted_taxon_biomass.Rda'))
+load(file.path(interim_results_dir, paste0('fitted_total_biomass', ifelse(use_agb, '_agb', ''), '.Rda')))
+
+load(file.path(interim_results_dir, paste0('fitted_taxon_biomass', ifelse(use_agb, '_agb', ''), '.Rda')))
+
 
 ## for grid:
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
@@ -28,8 +30,9 @@ if(FALSE) {  # this can cause negative biomasses...
 taxa <- names(biomass_taxon)
 taxaNames <- gsub("/", ",", taxa)  ## netCDF interprets / as 'groups'
 
-output_netcdf_name <- paste0("FIA_biomass_v", product_version, ".nc")
-output_netcdf_name_point <- paste0("FIA_biomass_point_v", product_version, ".nc")
+type <- ifelse(use_agb, 'biomass_agb', 'biomass_stem')
+output_netcdf_name <- paste0("FIA_", type, "_v", product_version, ".nc")
+output_netcdf_name_point <- paste0("FIA", type, "_v", product_version, ".nc")
 
 x_grid <- sort(unique(pred_grid$x))
 y_grid <- sort(unique(pred_grid$y))

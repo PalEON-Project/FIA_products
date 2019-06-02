@@ -8,7 +8,11 @@ library(tidyr)
 
 ## if doing only composition or density analysis, this could be changed to
 ## use full_trees.Rda
-load(file.path(interim_results_dir, 'full_trees_with_biomass.Rda'))
+fn <- 'full_trees_with_biomass'
+if(use_agb)
+    fn <- paste0(fn, '_agb')
+fn <-  paste0(fn, '.Rda')
+load(file.path(interim_results_dir, fn))
 
 ## create base raster in Albers projection -- see PalEON Wiki
 ## for info on the PalEON Albers-based grid.
@@ -71,6 +75,11 @@ pred_grid_west <- pred_grid[regions %in% paleon_regions_west, ]
 pred_grid_west_ohio <- pred_grid[regions %in% paleon_regions_west_ohio, ]
 pred_grid_east <- pred_grid[regions %in% paleon_regions_east, ]
 
+fn <- 'full_trees_with_biomass_grid'
+if(use_agb)
+    fn <- paste0(fn, '_agb')
+fn <-  paste0(fn, '.Rda')
+
 save(fia, base_raster, pred_grid, pred_grid_paleon, pred_grid_west,
      pred_grid_west_ohio, pred_grid_east, grid, regions,
-     file = file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
+     file = file.path(interim_results_dir, fn))

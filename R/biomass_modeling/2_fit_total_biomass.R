@@ -5,8 +5,11 @@
 ## For total biomass, all FIA analysis done on forested plots, so occupancy is always 1.
 
 library(dplyr)
+library(assertthat)
 
-load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
+load(file.path(interim_results_dir, paste0('full_trees_with_biomass_grid',
+                                           ifelse(use_agb, '_agb', ''), '.Rda')))
+
 
 if(!exists('k_pot_total_biomass'))
     stop("Must specify 'k_pot_total_biomass'")
@@ -43,5 +46,6 @@ biomass_total <- fit(cell_full, newdata = pred_grid_paleon, k_occ = NULL,
                      type_pot = fit_scale_biomass, num_draws = n_stat_samples, save_draws = TRUE,
                      use_bam = TRUE)
 
-save(biomass_total, file = file.path(interim_results_dir, 'fitted_total_biomass.Rda'))
+save(biomass_total, file = file.path(interim_results_dir, paste0('fitted_total_biomass', ifelse(use_agb, '_agb', ''), '.Rda')))
+
 

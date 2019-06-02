@@ -9,8 +9,10 @@
 ## This is very computationally-intensive and best done on a cluster.
 
 library(dplyr)
+library(assertthat)
 
-load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
+load(file.path(interim_results_dir, paste0('full_trees_with_biomass_grid',
+                                           ifelse(use_agb, '_agb', ''), '.Rda')))
 
 if(use_mpi) {
     library(doMPI)
@@ -128,12 +130,12 @@ for(taxonIdx in seq_along(taxa_to_fit)) {
         
     y <- sub$avg*sub$points_occ/sub$points_total  ## actual average biomass over all plots (occupied or not) in a cell
 
-    critArith[taxonIdx, , ] <- calc_cv_criterion(pred_occ[taxonIdx, , ], pred_pot_arith[taxonIdx, , ],
+    critArith[taxonIdx, , ] <- calc_point_criterion(pred_occ[taxonIdx, , ], pred_pot_arith[taxonIdx, , ],
                                                  sub$points_total, y, cv_max_biomass)
-    critLogArith[taxonIdx, , ] <- calc_cv_criterion(pred_occ[taxonIdx, , ], pred_pot_larith[taxonIdx, , ],
+    critLogArith[taxonIdx, , ] <- calc_point_criterion(pred_occ[taxonIdx, , ], pred_pot_larith[taxonIdx, , ],
                                                     sub$points_total, y, cv_max_biomass)
 }
 
-save(critArith, critLogArith, pred_occ, pred_pot_arith, pred_pot_larith, file = file.path(interim_results_dir, 'cv_taxon_biomass.Rda'))
+save(critArith, critLogArith, pred_occ, pred_pot_arith, pred_pot_larith, file = file.path(interim_results_dir, paste0('cv_taxon_biomass.Rda', ifelse(use_agb, '_agb',''), '.Rda')))
 
 if(use_mpi) closeCluster(cl)

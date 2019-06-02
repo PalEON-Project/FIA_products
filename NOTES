@@ -1,3 +1,9 @@
+6/2/19:
+It's not clear what file creates FIA_raster_cell_albers.csv.
+I'm creating FIA_raster_cell_albers_v0.2.csv by stripping out the LON_ALBERS and LAT_ALBERS columns.
+
+At this point I am starting with the output of 2_process_for_paleon.R and doing AGB biomass in place of stem biomass. 
+
 11/16/18:
 cv for taxon density for k_pot=2500 and k_pot=3500 are basically teh same.
 arith better than larith
