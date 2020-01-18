@@ -7,6 +7,7 @@
 ## Run-time: this takes about 3 hours, if done in parallel across the 21 taxa.
 
 library(dplyr)
+library(assertthat)
 
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 

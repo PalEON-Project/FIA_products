@@ -17,24 +17,29 @@ load(file.path(interim_results_dir, 'full_trees.Rda'))
 
 if(use_agb) {
     cols_conv <- cols(
-        level3a = col_character(),
-        pecan_allometry_spcd = col_character(),  ## multiple spcd separated by ; for non-exact matches
-        pecan_allometry_common_names = col_character()
+        level3a = col_character()
+        ## These columns no longer in the 3a-to-chojnacky conversion file.
+        ## pecan_allometry_spcd = col_character(),  ## multiple spcd separated by ; for non-exact matches
+        ## pecan_allometry_common_names = col_character()
     )
 
     ## Note: will see warning about missing column names for X4-X12
     taxa_conversion <- read_csv(file.path(conversions_data_dir, paleon_to_chojnacky_conversion_file),
                                 col_types = cols_conv) %>%
         dplyr::select(level3a, beta0, beta1)
-    
+
+    ## Add Douglas fir as not in PLS data, so haven't put it in level3a_to_chojnacky (though we probably should).
+    nr  <- nrow(taxa_conversion)
+    taxa_conversion[nr+1, ] <- taxa_conversion[nr, ]
+    taxa_conversion[nr+1, 'level3a']  <- 'Douglas fir'
+    taxa_conversion[nr+1, 'beta0']  <- -2.4623
+    taxa_conversion[nr+1, 'beta1']  <- 2.4852     
 
     fia <- fia %>% left_join(taxa_conversion, by = c("level3a" = "level3a")) %>%
         rename(int = beta0, slope = beta1)
 
     fia$int[fia$level3a == 'Unknown tree'] <- taxa_conversion$beta0[taxa_conversion$level3a == "Other hardwood"]
     fia$slope[fia$level3a == 'Unknown tree'] <- taxa_conversion$beta1[taxa_conversion$level3a == "Other hardwood"]
-    fia$int[fia$level3a == 'Douglas fir'] <- taxa_conversion$beta0[taxa_conversion$level3a == "Fir"]
-    fia$slope[fia$level3a == 'Douglas fir'] <- taxa_conversion$beta1[taxa_conversion$level3a == "Fir"]
     
     predict_biomass <- function(dbh_cm, b0, b1) {
         return(exp(b0+b1*log(dbh_cm)))
@@ -128,19 +133,18 @@ if(use_agb) {
     biomass[biomass > biomass_max_kg] <- biomass_max_kg
     
     save(tmp_plt, tmp_tree, tmp_subplt, biomass,
-         file = file.path(interim_results_dir, 'biomass_samples.Rda'))
-} 
+         file = file.path(interim_results_dir, 'biomass_samples.Rda')) 
  
-
-if(!do_allom_uncertainty) {
-    fia <- fia %>% mutate(biomass = rowMeans(biomass))
-} else {
-    biomass_tbl <- cbind(data_frame(PLT_CN = tmp_plt, SUBP = tmp_subplt, TREE = tmp_tree), biomass)
-    names(biomass_tbl)[4:ncol(biomass_tbl)] <- paste0('biomass_smp_', 1:n_allom_samples)
-    
-    fia <- fia %>% inner_join(biomass_tbl, by = c("PLT_CN", "SUBP", "TREE"))
-    assert_that(nrow(fia) == n_trees,
-                msg = "Something wrong with merge of biomass samples with tree data")
+    if(!do_allom_uncertainty) {
+        fia <- fia %>% mutate(biomass = rowMeans(biomass))
+    } else {
+        biomass_tbl <- cbind(data_frame(PLT_CN = tmp_plt, SUBP = tmp_subplt, TREE = tmp_tree), biomass)
+        names(biomass_tbl)[4:ncol(biomass_tbl)] <- paste0('biomass_smp_', 1:n_allom_samples)
+        
+        fia <- fia %>% inner_join(biomass_tbl, by = c("PLT_CN", "SUBP", "TREE"))
+        assert_that(nrow(fia) == n_trees,
+                    msg = "Something wrong with merge of biomass samples with tree data")
+    }
 }
 
 fn <- 'full_trees_with_biomass'

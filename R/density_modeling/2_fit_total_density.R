@@ -5,6 +5,7 @@
 ## For total density, all FIA analysis done on forested plots, so occupancy is always 1.
 
 library(dplyr)
+library(assertthat)
 
 load(file.path(interim_results_dir, 'full_trees_with_biomass_grid.Rda'))
 

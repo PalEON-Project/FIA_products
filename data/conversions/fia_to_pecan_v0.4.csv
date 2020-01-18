@@ -1,0 +1,254 @@
+fia_spcd,fia_counts,fia_scientific_names,fia_common_names,pecan_allometry_spcd,pecan_allometry_common_names,acronym,pft
+460,2,Celtis spp,Hackberry,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CELTI,SMH
+481,6,Cladrastis kentukea,Yellowwood,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CLKE,NMH
+561,7,Ginkgo biloba,Ginkgo,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",GIBI2,UNK
+501,8,Crataegus crus-galli,Cockspur hawthorn,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",CRCR2,NMH
+650,13,Magnolia spp,Magnolia,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MAGNO,SMH
+712,13,Paulownia tomentosa,Paulownia,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",PATO2,EH
+221,18,Taxodium distichum,Baldcypress,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",TADI2,Hydric
+450,24,Catalpa spp,Catalpa,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CATAL,EH
+680,24,Morus spp,Mulberry,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MORUS,SMH
+452,37,Catalpa speciosa,Northern catalpa,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CASP8,EH
+571,44,Gymnocladus dioicus,Kentucky coffeetree,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",GYDI,EH
+663,73,Malus coronaria,Sweet crabapple,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MACO5,NMH
+421,82,Castanea dentata,American chestnut,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CADE12,LH
+461,86,Celtis laevigata,Sugarberry,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CELA,SMH
+653,101,Magnolia virginiana,Sweetbay,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MAVI2,Evergreen
+681,270,Morus alba,White mulberry,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MOAL,NMH
+591,274,Ilex opaca,American holly  ,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",ILOP,Evergreen
+651,473,Magnolia acuminata,Cucumbertree,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MAAC,SMH
+682,484,Morus rubra,Red mulberry  ,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MORU2,NMH
+999,515,Tree unknown,Other or unknown live tree,318;802;541;731,,UNK,NMH
+521,555,Diospyros virginiana,Common persimmon,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",DIVI5,LH
+935,628,Sorbus americana,American mountain-ash  ,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",SOAM3,NMH
+471,703,Cercis canadensis,Eastern redbud,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CECA4,SMH
+601,713,Juglans cinerea,Butternut,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",JUCI,NMH
+341,752,Ailanthus altissima,Ailanthus,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",AIAL,EH
+641,1425,Maclura pomifera,Osage-orange,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MAPO,EH
+660,3145,Malus spp,Apple spp.,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",MALUS,NMH
+602,4509,Juglans nigra,Black walnut,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",JUNI,NMH
+500,5192,Crataegus spp,Hawthorn,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",CRATA,NMH
+90,1,Picea spp,Spruce   ,94;95;97,"94  white  spruce, 95  black  spruce, 97  red  spruce",PISP,MC
+310,1,Acer spp,Maple,316;318,"318  sugar  maple, 316  red  maple",ACER,LH
+424,1,Castanea mollissima,Chinese chestnut,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",CAMO83,SMH
+540,1,Fraxinus spp,Ash ,541;543;544,"541  white  ash, 543  black  ash, 544  green  ash",FRAXI,SMH
+820,1,Quercus laurifolia,Laurel oak,827,827  water  oak,QULA3,SMH
+828,1,Quercus buckleyi,Buckley oak,812,812  southern red  oak,QUBU2,SMH
+845,1,Quercus prinoides,Dwarf chinkapin oak,832,832  chestnut  oak,QUPR,NMH
+997,1,Elaeagnus angustifolia,Russian-olive,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",ELAN,EH
+93,2,Picea engelmannii,Engelmann spruce,94,94  white  spruce,ESSF,
+936,2,Sorbus aucuparia,European mountain-ash,763,763  choke  cherry,SOAU,NMH
+10,3,Abies spp,Fir spp.,12,12  balsam  fir,ABSP,MC
+16,3,Abies fraseri,Fraser fir,12,12  balsam  fir,ABFR,MC
+57,3,Juniperus spp,Juniper,241,"no cedar/juniper allometries available except northern white cedar",JUSP,LC
+772,3,Prunus cerasus,Sour cherry,762,762  black  cherry,PRCE,EH
+502,4,Crataegus mollis,Downy hawthorn,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",CRMO2,NMH
+658,4,Magnolia tripetala,Umbrella magnolia,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",MATR,SMH
+345,5,Albizia julibrissin,Mimosa,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",ALJU,EH
+929,5,Salix sepulcralis,Weeping willow,920,920    willow,SASE10,EH
+937,7,Sorbus decora,Northern mountain-ash,763,763  choke  cherry,SODE,
+765,9,Prunus nigra,Canada plum,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",PRNI,EH
+15,10,Abies concolor,White fir,12,"CJP: not enough PEcAn allometry data to use 10",ABCO,MC
+934,11,Sorbus spp,Mountain-ash spp,763,763  choke  cherry,SORBU,NMH
+122,26,Pinus ponderosa,Ponderosa pine,125,125  red  pine,PIPO,NP
+330,89,Aesculus spp,Buckeye,332,332  yellow  buckeye,AESCU,LH
+970,108,Ulmus spp,Elm,318;802;541;731,"not enough elm allometries",ULMUS,NMH
+766,269,Prunus americana,American plum,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",PRAM,EH
+367,333,Asimina triloba,Pawpaw,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",ASTR,SMH
+972,24764,Ulmus americana,American elm,318;802;541;731,"not enough elm allometries",ULAM,NMH
+974,111,Ulmus pumila,Siberian elm,318;802;541;731,"not enough elm allometries",ULPU,NMH
+977,313,Ulmus thomasii,Rock elm,318;802;541;731,"not enough elm allometries",ULTH,NMH
+971,411,Ulmus alata,Winged elm,318;802;541;731,"not enough elm allometries",ULAL,SMH
+975,4616,Ulmus rubra,Slippery elm  ,318;802;541;731,"not enough elm allometries",ULRU,NMH
+952,3,Tilia americana var. heterophylla,American basswood,951,American  basswood,TIAMH,LH
+950,12,Tilia spp,Basswood spp,951,American  basswood,TILIA,LH
+951,31113,Tilia americana,American basswood  ,951,American  basswood,TIAM,LH
+931,6044,Sassafras albidum,Sassafras,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",SAAL5,NMH
+927,13,Salix alba,White willow,920,willow,SAAL2,EH
+921,130,Salix amygdaloides,Peachleaf willow,920,willow,SAAM2,Hydric
+923,204,Salix bebbiana,Bebb willow,920,willow,SABE2,EH
+920,276,Salix spp,Willow   ,920,willow,SALIX,EH
+922,2401,Salix nigra,Black willow  ,920,willow,SANI,EH
+552,1127,Gleditsia triacanthos,Honeylocust,901,black  locust,GLTR,EH
+901,3904,Robinia pseudoacacia,Black locust  ,901,black  locust,ROPS,EH
+551,NA,Gleditsia aquatica,Waterlocust,901,black  locust,GLAQ,Hydric
+837,14442,Quercus velutina,Black oak  ,837,black  oak,QUVE,NMH
+824,141,Quercus marilandica,Blackjack oak,835,post  oak,QUMA3,SMH
+816,222,Quercus ilicifolia,Scrub oak,835,post  oak,QUIL,NMH
+835,1142,Quercus stellata,Post oak,835,post  oak,QUST,SMH
+833,52956,Quercus rubra,Northern red oak ,833,northern red  oak,QURU,NMH
+825,42,Quercus michauxii,Swamp chestnut oak,832,chestnut  oak,QUMI,SMH
+826,471,Quercus muehlenbergii,Chinkapin oak,832,chestnut  oak,QUMU,SMH
+832,9724,Quercus prinus,Chestnut oak  ,832,chestnut  oak,QUPR2,SMH
+831,16,Quercus phellos,Willow oak ,827,water  oak,QUPH,SMH
+817,1281,Quercus imbricaria,Shingle oak,827,water  oak,QUIM,SMH
+827,NA,Quercus nigra,Water oak ,827,water  oak,QUNI,SMH
+823,15496,Quercus macrocarpa,Bur oak,802;804;822;823;835,"CJP: not enough PEcAn allometry data to use 823",QUMA2,NMH
+822,26,Quercus lyrata,Overcup oak,812,southern red  oak,QULY,Hydric
+813,66,Quercus pagoda,Cherrybark oak ,812,southern red  oak,QUPA5,SMH
+812,246,Quercus falcata,Southern red oak,812,southern red  oak,QUFA,SMH
+830,1541,Quercus palustris,Pin oak,806;809;812;813;830;833;837,"CJP: not enough PEcAn allometry data to use 809",QUPA2,NMH
+809,4552,Quercus ellipsoidalis,Northern pin oak,806;809;812;813;830;833;837,"CJP: not enough PEcAn allometry data to use 809",QUEL,NMH
+806,2926,Quercus coccinea,Scarlet oak  ,806,scarlet  oak,QUCO2,SMH
+834,25,Quercus shumardii,Shumard's oak,802,white oak,QUSH,SMH
+804,1239,Quercus bicolor,Swamp white oak ,802,white oak,QUBI,NMH
+802,24301,Quercus alba,White oak  ,802,white oak,QUAL,NMH
+763,2599,Prunus virginiana,Chokecherry,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",PRVI,EH
+760,88,Prunus spp,Cherry,318;802;541;731,"not enough big cherry allometries",PRUNU,EH
+771,231,Prunus avium,Sweet cherry,318;802;541;731,"not enough big cherry allometries",PRAV,EH
+762,36573,Prunus serotina,Black cherry,318;802;541;731,"not enough big cherry allometries",PRSE2,EH
+761,3337,Prunus pennsylvanica,Pin cherry,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"small trees",PRPE2,EH
+746,179606,Populus tremuloides,Quaking aspen  ,746,quaking  aspen,POTR5,EH
+743,30573,Populus grandidentata,Bigtooth aspen  ,743,bigtooth  aspen,POGR4,EH
+752,2,Populus alba,Silver poplar,741,balsam  poplar,POAL7,EH
+740,107,Populus spp,Poplar,740;741;742;743;746;752,"CJP: not enough PEcAn allometry data to use 741",POPUL,EH
+741,20921,Populus balsamifera,Balsam poplar,740;741;742;743;746;752,"CJP: not enough PEcAn allometry data to use 741",POBA2,EH
+744,3,Populus heterophylla,Swamp cottonwood,740,cottonwood,POHE4,Hydric
+742,2772,Populus deltoides,Eastern cottonwood  ,740,cottonwood,PODE3,EH
+731,1550,Platanus occidentalis,American sycamore,731,sycamore,PLOC,LH
+711,347,Oxydendrum arboreum,Sourwood,318;802;541;731,"Charlie recommends other hardwood given lack of PEcAn allometry data for 711",OXAR,LH
+391,5597,Carpinus caroliniana,Hornbeam,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",CACA18,LH
+701,18485,Ostrya virginiana,Eastern hophornbeam,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",OSVI,NMH
+693,4297,Nyssa sylvatica,Blackgum   ,693,blackgum,NYSY,SMH
+691,67,Nyssa aquatica,Water tupelo,691,water tupelo,NYAQ2,Hydric
+621,6880,Liriodendron tulipifera,Yellow-poplar   ,621,yellow-poplar,LITU,SMH
+611,1582,Liquidambar styraciflua,Sweetgum,611,sweetgum,LIST2,EH
+546,86,Fraxinus quadrangulata,Blue ash,544,green  ash,FRQU,SMH
+544,15686,Fraxinus pennsylvanica,Green ash,544,green  ash,FRPE,NMH
+543,42274,Fraxinus nigra,Black ash,543,black  ash,FRNI,NMH
+541,29681,Fraxinus americana,White ash,541,white  ash,FRAM2,NMH
+545,7,Fraxinus profunda,Pumpkin ash,540;541;543;544,ash spp,FRPR,NMH
+531,42943,Fagus grandifolia,Beech   ,531,American  beech,FAGR,LH
+491,2643,Cornus florida,Flowering dogwood,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",COFL2,LH
+462,3164,Celtis occidentalis,Hackberry,318;802;541;731,"Changed as of 4/13/18 per Charlie-Chris convo",CEOC,NMH
+407,6726,Carya ovata,Shagbark hickory,400;401;402;403;407;409;410;412,hickory sp.,CAOV2,NMH
+412,NA,Carya ovalis,Red hickory,400;401;402;403;407;409;410;412,hickory sp.,CAOV3,NMH
+401,4,Carya aquatica,Water hickory,400,hickory  sp.,CAAQ2,Hydric
+408,65,Carya texana,Black hickory,400,hickory sp.,CATE9,SMH
+404,83,Carya illinoensis,Pecan,400,hickory sp.,CAIL2,SMH
+405,112,Carya laciniosa,Shellbark hickory,400,hickory sp.,CALA21,SMH
+409,1803,Carya alba,Mockernut hickory,400,hickory  sp.,CAAL27,SMH
+400,3051,Carya spp,Hickory,400,hickory  sp.,CARYA,NMH
+403,3803,Carya glabra,Pignut hickory ,400,hickory  sp.,CAGL8,SMH
+402,4483,Carya cordiformis,Bitternut hickory,400,hickory  sp.,CACO15,NMH
+410,NA,Carya pallida,Sand hickory,400,hickory  sp.,CAPA24,SMH
+379,2370,Betula populifolia,Gray birch  ,379,gray  birch,BEPO,EH
+373,551,Betula nigra,River birch,375,paper  birch,BENI,EH
+375,65246,Betula papyrifera,Paper birch  ,375,paper  birch,BEPA,EH
+372,13087,Betula lenta,Sweet birch,372,sweet  birch,BELE,EH
+371,33038,Betula alleganiensis,Yellow birch,371,yellow  birch,BEAL2,EH
+357,4,Amelanchier arborea,Downy serviceberry,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",AMAR3,NMH
+356,2653,Amelanchier ,Serviceberry,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",AMELA,NMH
+355,9,Alnus glutinosa,European alder,351,red  alder,ALGL2,LH
+332,354,Aesculus flava,Yellow buckeye,332,yellow  buckeye,AEFL,LH
+331,431,Aesculus glabra,Ohio buckeye,332,yellow  buckeye,AEGL,LH
+319,5040,Acer spicatum,Mountain maple,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",ACSP2,LH
+320,230,Acer platanoides,Norway maple,318,sugar  maple,ACPL,LH
+314,259,Acer nigrum,Black maple,318,sugar  maple,ACNI5,LH
+318,138404,Acer saccharum,Sugar maple  ,318,sugar  maple,ACSA3,LH
+317,6824,Acer saccharinum,Silver maple,316,red  maple,ACSA2,LH
+313,7870,Acer negundo,Boxelder,316,red  maple poor fit,ACNE2,LH
+316,172713,Acer rubrum,Red maple  ,316,red  maple,ACRU,LH
+315,6566,Acer pensylvanicum,Striped maple,315;471;491;319;355;356;357;931;935;391;701;660;761;500;501;502;763;662;663;765;766,"Charlie recommends 'small trees' category given lack of PEcAn allometries",ACPE,LH
+261,43792,Tsuga canadensis,Eastern hemlock  ,261,eastern  hemlock,TSCA,LC
+43,1056,Chamaecyparis thyoides,Atlantic white-cedar,241,"no cedar/juniper allometries available except northern white cedar",CHTH2,LC
+241,86694,Thuja occidentalis,Northern white-cedar,241,Northern white-cedar,THOC2,LC
+202,115,Pseudotsuga menziesii,Douglas-fir,202,Douglas-fir,PSME,MC
+128,6,Pinus serotina,Pond pine,131,loblolly pine,PISE,SP
+131,339,Pinus taeda,Loblolly pine  ,131,loblolly pine,PITA,SP
+129,39651,Pinus strobus,White pine  ,129,eastern white  pine,PIST,NP
+123,25,Pinus pungens,Table mountain pine ,126,pitch  pine,PIPU5,SP
+132,1362,Pinus virginiana,Virginia pine,126,pitch  pine,PIVI2,SP
+130,2851,Pinus sylvestris,Scotch pine,126,pitch  pine,PISY,NP
+126,5545,Pinus rigida,Pitch pine,126,pitch  pine,PIRI,NP
+136,178,Pinus nigra,Austrian pine,125,red  pine,PINI,NP
+110,1036,Pinus echinata,Shortleaf pine,125,red  pine,PIEC2,SP
+125,35408,Pinus resinosa,Red pine  ,125,red  pine,PIRE,NP
+105,24257,Pinus banksiana,Jack pine  ,105,jack  pine,PIBA2,NP
+97,30136,Picea rubens,Red spruce,97,red  spruce,PIRU,MC
+95,64218,Picea mariana,Black spruce  ,95,black  spruce,PIMA,MC
+91,2246,Picea abies,Norway spruce,94,white  spruce,PIAB,MC
+94,17875,Picea glauca,White spruce  ,94,white  spruce,PIGL,MC
+96,103,Picea pungens,Blue spruce,93,Engelmann spruce,PIPU,MC
+70,361,Larix spp,Larch spp,71,tamarack,LASP,EH
+71,28329,Larix laricina,Tamarack,71,tamarack,LALA,EH
+68,3423,Juniperus virginiana,Eastern redcedar,241,"no cedar/juniper allometries available except northern white cedar",JUVI,LC
+12,139665,Abies balsamea,Balsam fir,12,balsam  fir,ABBA,LC
+764,1,Prunus persica,Peach,318;802;541;731,"1000 eastern hardwoods or for ""None close/other hardwoods"" Charlie recommends: 318 sugar maple, 802 white oak, 541 white ash, 731 sycamore",PRPE,EH
+61,NA,Juniperus ashei,Ashe juniper,,,JUAS,LC
+66,NA,Juniperus scopulorum,Rocky Mountain juniper,,,JUSC,LC
+67,NA,Juniperus virginiana var silicicola,Southern redcedar,,,JUVIS,LC
+107,NA,Pinus clausa,Sand pine,,,PICL,SP
+111,NA,Pinus elliottii,Slash pine  ,,,PIEL,SP
+115,NA,Pinus glabra,Spruce pine,,,PIGL2,SP
+121,NA,Pinus palustris,Longleaf pine  ,,,PIPA2,SP
+222,NA,Taxodium ascendens,Pond cypress,,,TAAS,Hydric
+260,NA,Tsuga spp,Hemlock   ,,,TSUGA,LC
+262,NA,Tsuga caroliniana,Carolina hemlock,,,TSCA2,LC
+311,NA,Acer barbatum,Florida maple,,,ACBA3,LH
+323,NA,Acer leucoderme,Chalk maple,,,ACLE,LH
+334,NA,Aesculus glabra var arguta,Texas buckeye,,,AEGLA,LH
+350,NA,Alnus spp,Alder,,,ALNUS,EH
+370,NA,Betula spp,Birch,,,BETUL,EH
+381,NA,Sideroxylon lanuginosum ssp. lanuginosum,Chittamwood,,,SILAL3,EH
+406,NA,Carya myristiciformis,Nutmeg hickory,,,CAMY,SMH
+413,NA,Carya carolinae-septentrionalis,Southern shagbark hickory,,,CACA38,SMH
+422,NA,Castanea pumila,Chinkapin,,,CAPU9,SMH
+423,NA,Castanea pumila var ozarkensis,Ozark chinkapin,,,CAPUO,SMH
+451,NA,Catalpa bignoniodes,Southern catalpa,,,CABI8,EH
+463,NA,Celtis laevigata var reticulata,Netleaf hackberry,,,CELAR,NMH
+510,NA,Eucalyptus spp,Eucalyptus,,,EUCAL,Evergreen
+513,NA,Eucalyptus grandis,Grand eucalyptus,,,EUGR12,Evergreen
+520,NA,Diospyros spp,Persimmon,,,DIOSP,LH
+548,NA,Fraxinus caroliniana,Carolina ash,,,FRCA3,SMH
+555,NA,Gordonia lasianthus,Loblolly-bay,,,GOLA,Evergreen
+580,NA,Halesia spp,Silverbell,,,HALES,LH
+581,NA,Halesia carolina,Carolina silverbell,,,HACA3,LH
+582,NA,Halesia parviflora,Two-wing silverbell,,,HAPA,LH
+600,NA,Juglans spp,Walnut,318;802;541;731,"No PEcAn allometry for walnut",JUGLA,NMH
+652,NA,Magnolia grandifolia,Southern magnolia ,,,MAGR4,Evergreen
+654,NA,Magnolia macrophylla,Bigleaf magnolia,,,MAMA2,SMH
+655,NA,Magnolia fraseri,Mountain magnolia,,,MAFR,SMH
+662,NA,Malus angustifolia,Southern crabapple,,,MAAN3,SMH
+664,NA,Malus ioensis,Prairie crabapple,,,MAIO,NMH
+692,NA,Nyssa ogeche,Ogechee tupelo,,,NYOG,Hydric
+694,NA,Nyssa biflora,Swamp tupelo,,,NYBI,Hydric
+721,NA,Persea borbonia,Redbay,,,PEBO,Evergreen
+722,NA,Planera aquatica,Water elm,,,PLAQ,Hydric
+745,NA,Populus deltoides sub monilifera,Plains cottonwood,,,PODEM,EH
+753,NA,Populus nigra,Lombardy poplar,,,PONI,EH
+758,NA,Prosopis pubescens,Screwbean mesquite,,,PRPU,EH
+800,NA,Quercus spp,Oak spp. -- Deciduous,,,QUERC,SMH
+808,NA,Quercus sinuata var sinuata,Durand oak,,,QUSIS,SMH
+819,NA,Quercus laevis,Turkey oak,,,QULA2,SMH
+836,NA,Quercus similis,Delta post oak,,,QUSI2,SMH
+838,NA,Quercus virginiana,Live oak,,,QUVI,Evergreen
+840,NA,Quercus margarettiae,Dwarf post oak,,,QUMA6,SMH
+841,NA,Quercus minima,Dwarf live oak,,,QUMI2,Evergreen
+842,NA,Quercus incana,Bluejack oak,,,QUIN,SMH
+844,NA,Quercus oglethorpensis,Oglethorpe oak,,,QUOG,SMH
+854,NA,Bursera simaruba,Gumbo limbo,,,BUSI,EH
+857,NA,Casuarina lepidophloia,Belah,,,CALE28,Evergreen
+858,NA,Cinnamomum camphora,Camphor tree,,,CICA,Evergreen
+860,NA,Citrus spp,Citrus,,,CITRU2,Hydric
+873,NA,Eugenia rhombea,Red stopper,,,EURH,Hydric
+876,NA,Ficus aurea,Florida strangler fig,,,FIAU,EH
+886,NA,Metopium toxiferum,Florida poisontree,,,METO3,Hydric
+912,NA,Sabal palmetto,Cabbage palmetto,,,SAPA,Hydric
+913,NA,Thrinax morrisii,Key thatch palm,,,THMO4,Hydric
+915,NA,Family Arecaceae not listed above,Other palms,,,PALM,Hydric
+919,NA,Sapindus saponaria var drummondii,Western soapberry,,,SASAD,LH
+925,NA,Salix caroliniana,Costal plain willow,,,SACA5,EH
+953,NA,Tilia americana var caroliniana,Carolina basswood,,,TIAMC,LH
+973,NA,Ulmus crassifolia,Cedar elm,,,ULCR,SMH
+976,NA,Ulmus serotina,September elm,,,ULSE,SMH
+981,NA,Umbellularia californica,California laurel,,,UMCA,Evergreen
+986,NA,Avicennia germinans,Black-mangrove,,,AVGE,Evergreen
+987,NA,Conocarpus erectus,Buttonwood mangrove,,,COER2,Evergreen
+988,NA,Laguncularia racemosa,White -mangrove,,,LARA2,Evergreen
+989,NA,Rhizophora mangle,American mangrove,,,RHMA2,Evergreen
+992,NA,Melaleuca quinquenervia,Melaleuca,,,MEQU,Evergreen
+993,NA,Melia azedarach,Chinaberrytree,,,MEAZ,EH
+994,NA,Triadica sebifera,Chinese tallowtree,,,TRSE6,SMH
+995,NA,Vernicia fordii,Tung-oil-tree,,,VEFO,EH
+996,NA,Cotinus obovatus,Smoketree,,,COOB2,SMH

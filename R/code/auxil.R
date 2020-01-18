@@ -30,7 +30,7 @@ calc_cov_criterion <- function(draws_logpot, sig2, data, n_draw = 250, seed = 1,
                                         sqrt(sig2[ , j]/(data$points_occ/scale)))
             } else {
                 ypot <- rnorm(N, draws_logpot[ , j, k],
-                                            sqrt(sig2[ , j](data$points_occ/scale)))
+                                            sqrt(sig2[ , j]/(data$points_occ/scale)))
                 ypot <- exp(ypot)
             }
             tmp[ , k] <- ypot

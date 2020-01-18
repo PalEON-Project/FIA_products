@@ -32,7 +32,7 @@ taxaNames <- gsub("/", ",", taxa)  ## netCDF interprets / as 'groups'
 
 type <- ifelse(use_agb, 'biomass_agb', 'biomass_stem')
 output_netcdf_name <- paste0("FIA_", type, "_v", product_version, ".nc")
-output_netcdf_name_point <- paste0("FIA", type, "_v", product_version, ".nc")
+output_netcdf_name_point <- paste0("FIA_", type, "_point_v", product_version, ".nc")
 
 x_grid <- sort(unique(pred_grid$x))
 y_grid <- sort(unique(pred_grid$y))

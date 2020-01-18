@@ -3,11 +3,11 @@
 ## this is sourced by R, but in a format that could
 ## be sourced in the shell if desired (use of '=' and without spaces)
 
-product_version="1.0rc1"
+product_version="1.0rc2"
 
 use_original_R_package_versions=1
-R_version="3.5.1"  # v0.999 was done with R 3.4.3
-checkpoint_date="2019-04-13"  # v. 0.999 done with checkpoint date of 2018-09-20)
+R_version="3.6.1"  # v0.999 was done with R 3.4.3
+checkpoint_date="2019-09-01"  # v. 0.999 done with checkpoint date of 2018-09-20)
 
 
 ## directory locations: these default to ../data/{points,conversions,allom}, code, and ../output in master.R
@@ -45,7 +45,7 @@ fia_to_level3a_file="fia_to_level3a_v0.5.csv"
 level3a_to_level3s_file="level3a_to_level3s_v0.4.csv"
 ## map FIA plots to PalEON grid cells (unversioned file had the plot locations embedded so needing to remove that)
 fia_plot_to_paleon_gridcell_file="FIA_raster_cell_albers_v0.2.csv"
-paleon_to_chojnacky_conversion_file="level3a_to_chojnacky_v0.1.csv"
+paleon_to_chojnacky_conversion_file="level3a_to_chojnacky_v0.4.csv"
 
 
 ## data earlier than 1999 from different survey design and
@@ -85,7 +85,7 @@ use_agb=1
 ## cross-validation folds for biomass/density
 n_folds=10
 # truncate at these values when using CV to compare data and fits
-cv_max_biomass=200
+cv_max_biomass=600
 cv_max_density=600
 
 ## parallelization for biomass
@@ -129,7 +129,7 @@ blend_below=112  # id of y direction grid number below which do blending (this a
 
 ## MCMC sampling
 composition_region="western"
-S=300000     # final analyses used concatentation of two 150k-long runs
+S=300000     # final analyses used concatenation of two 150k-long runs
 burnin=50000  # final analysis used first 100 of 600 thinned as burnin
 thin=500  # thinning applies to all S not just S-burnin
 secondThin=2  # to go from 500 total down to 250 for smaller output

@@ -1,3 +1,11 @@
+6/3/19:
+coverage is fine ~90% for both arith and larith for total biomass
+
+SE for arith doesn't nicely increase with fits but some trend upwards
+and the plots fo SE for arith vs larith don't look crazy (nonlinear but positively correlated)
+
+as before arith fits generally higher than larith
+
 6/2/19:
 It's not clear what file creates FIA_raster_cell_albers.csv.
 I'm creating FIA_raster_cell_albers_v0.2.csv by stripping out the LON_ALBERS and LAT_ALBERS columns.
